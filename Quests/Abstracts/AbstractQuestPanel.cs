@@ -9,7 +9,6 @@ public abstract class AbstractQuestPanel : MainRefs, IQuestUnsubscribe
 
 	public virtual void Init(AbstractQuestBlock questBlock, AbstractQuestBlockPart blockPart, object obj)
 	{
-		SetRefs();
 		this.questBlock = questBlock;
 		this.blockPart = blockPart;
 		SortByPriority();

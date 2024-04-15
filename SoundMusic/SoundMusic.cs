@@ -28,7 +28,6 @@ public class SoundMusic : MainRefs
 
 	protected override void Start()
 	{
-		SetRefs();
 		audioSource = GetComponent<AudioSource>();
 		mainThemeTimer.OnTimerReached = PlayMainThemeSound;
 		SetSoundEnable(GetRef<AbstractSavingManager>().GetSavingData<GeneralSavingData>().isSoundOn);

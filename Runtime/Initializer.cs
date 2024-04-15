@@ -53,11 +53,6 @@ public class Initializer : MonoBehaviour
 
 			foreach (var item in mainRefs)
 			{
-				item.SetRefsInit();
-			}
-
-			foreach (var item in mainRefs)
-			{
 				item.OnInitializeFinished();
 			}
 		}

@@ -13,24 +13,23 @@ public class ResourceCountPanel : MainRefs, IObjectObserver
 	public Image icon;
 	private Dictionary<IObjectObservable, float> observablePairs = new Dictionary<IObjectObservable, float>();
 	public string addStringToEnd, addStringToBegining;
+    private SharedObjects sharedObjects => GetRef<SharedObjects>();
 
-	public void Init(IObjectObservable observable)
+    public void Init(IObjectObservable observable)
 	{
-		SetRefs();
 		observablePairs.Add(observable, 0);
 		observable.AddObjectObserver(this);
 		observable.GetObjectObservableState(this, new object[] { resourceType, resourceType1 });
-		icon.sprite = resourceType1 == ResourceType.none ? SharedObjects.GetResourceSprite(resourceType) : SharedObjects.GetResourceSprite(resourceType1);
+		icon.sprite = resourceType1 == ResourceType.none ? sharedObjects.GetResourceSprite(resourceType) : sharedObjects.GetResourceSprite(resourceType1);
 		Update();
 	}
 
 	public void Init(List<IObjectObservable> observables)
 	{
-		SetRefs();
 		observables.ForEach(a => observablePairs.Add(a, 0));
 		observables.ForEach(a => a.AddObjectObserver(this));
 		observables.ForEach(a => a.GetObjectObservableState(this, new object[] { resourceType, resourceType1 }));
-		icon.sprite = resourceType1 == ResourceType.none ? SharedObjects.GetResourceSprite(resourceType) : SharedObjects.GetResourceSprite(resourceType1);
+		icon.sprite = resourceType1 == ResourceType.none ? sharedObjects.GetResourceSprite(resourceType) : sharedObjects.GetResourceSprite(resourceType1);
 		Update();
 	}
 

@@ -16,8 +16,6 @@ public class DebugTools : MainRefs
 
 	public void SetDebugData()
 	{
-		SetRefs();
-
 		foreach (var item in craftItemsList)
 		{
 			if (item.isEnable) item.craftItem.level = item.level;

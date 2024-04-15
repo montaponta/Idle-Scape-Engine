@@ -34,7 +34,7 @@ public class ResourceProducersSavingData : AbstractSavingData
 				var container = arr.FirstOrDefault(a => a.transform.GetComponentInParent<IIDExtention>().GetID() == item.producerContainerId);
 				GameObject prefab = null;
 				if (item.producerType == ResourceProducerType.loot)
-					prefab = savingManager.SharedObjects.GetLootPrefab(item.resourcesList[0].resourceType);
+					prefab = savingManager.GetRef<SharedObjects>().GetLootPrefab(item.resourcesList[0].resourceType);
 
 				var go = Object.Instantiate(prefab);
 				go.GetComponent<AbstractResourceProducer>().isEnable = item.isEnable;

@@ -6,24 +6,12 @@ using UnityEngine;
 
 public class MainRefs : MonoBehaviour
 {
-    [NonSerialized] public SharedObjects SharedObjects;
     private Dictionary<Type, MainRefs> systemsPairs = new Dictionary<Type, MainRefs>();
-
-    public virtual void SetRefs()
-    {
-        SharedObjects = SharedObjects.shared;
-    }
 
     protected virtual void Start()
     {
-        SetRefs();
         StartCoroutine(PostStartCoroutine());
         StartCoroutine(DelayStartCoroutine());
-    }
-
-    public virtual void SetRefsInit()
-    {
-        SetRefs();
     }
 
     public virtual void OnInitializeFinished() { }

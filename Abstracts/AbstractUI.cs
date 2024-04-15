@@ -8,6 +8,7 @@ public class AbstractUI : MainRefs
     public Transform iconGridFolder;
     public GameObject craftPanel;
     public IconGrid iconGrid;
+    private SharedObjects sharedObjects => GetRef<SharedObjects>();
 
     protected virtual void Awake()
     {
@@ -66,13 +67,13 @@ public class AbstractUI : MainRefs
 
     public void CreateOpenResourceProducerPanel(AbstractResourceProducer producer)
     {
-        var go = Instantiate(SharedObjects.openResourcePanelPrefab, panelsFolder);
+        var go = Instantiate(sharedObjects.GetIDGameObjectData("openResourcePanelPrefab"), panelsFolder);
         go.GetComponent<AbstractPanel>().Init(new object[] { producer });
     }
 
     public void CreateOpenContainerPanel(AbstractContainer container)
     {
-        var go = Instantiate(SharedObjects.openContainerResourcePanelPrefab, panelsFolder);
+        var go = Instantiate(sharedObjects.GetIDGameObjectData("openContainerResourcePanelPrefab"), panelsFolder);
         go.GetComponent<AbstractPanel>().Init(new object[] { container });
         container.OnPlayerTapObject();
     }
@@ -81,9 +82,9 @@ public class AbstractUI : MainRefs
     {
         foreach (var item in list)
         {
-            var panel = iconGrid.CreateIcon<ResourceCountPanel>(SharedObjects.resourceCountCraftPanel, observable.GetObjectObservableTransform(), SharedObjects.panelContainerPrefab);
+            var panel = iconGrid.CreateIcon<ResourceCountPanel>(sharedObjects.GetIDGameObjectData("needResourcePanel"), observable.GetObjectObservableTransform(), sharedObjects.GetIDGameObjectData("panelContainerPrefab"));
             panel.resourceType = item.resourceType;
-            panel.icon.sprite = SharedObjects.GetResourceSprite(item.resourceType);
+            panel.icon.sprite = sharedObjects.GetResourceSprite(item.resourceType);
             panel.addStringToEnd = $"/{item.count}";
             panel.updatePosition = false;
             panel.Init(observable);

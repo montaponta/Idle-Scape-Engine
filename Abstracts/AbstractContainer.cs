@@ -47,7 +47,8 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
             isInHackProcess = true;
             unlockTimer.OnTimerReached += OnContainerOpened;
             GetRef<AbstractUI>().iconGrid.DestroyAllIcons(transform);
-            bar = GetRef<AbstractUI>().iconGrid.CreateIcon<ProgressBarUI>(SharedObjects.roundBarPrefab, transform, SharedObjects.panelContainerPrefab);
+            var sharedObjects = GetRef<SharedObjects>();
+            bar = GetRef<AbstractUI>().iconGrid.CreateIcon<ProgressBarUI>(sharedObjects.GetIDGameObjectData("roundBarPrefab"), transform, sharedObjects.GetIDGameObjectData("panelContainerPrefab"));
             var time = (float)SOData.GetValueByTag("OpenTime", typeof(float));
             unlockTimer.StartTimer(time);
         }

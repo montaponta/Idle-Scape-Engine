@@ -22,7 +22,6 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
 
     protected override void Start()
     {
-        SetRefs();
         SetItemLevel(level);
         craftTimer.OnTimerReached = AssemblingComplete;
     }
