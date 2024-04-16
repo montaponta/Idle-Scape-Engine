@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 public class SharedObjects : MainRefs
@@ -58,23 +59,20 @@ public class SharedObjects : MainRefs
         return arr[index];
     }
 
-    public T InstantiateUIElement<T>(string id, Transform parent)
+    public T InstantiateObject<T>(string id, Transform parent)
     {
         var go = Instantiate(GetIDGameObjectData(id), parent);
         return go.GetComponent<T>();
     }
 
-    public ResourceCountPanel InstantiateResourceCountPanel(string id, Transform parent)
+#if UNITY_EDITOR
+    public T InstantiatePrefab<T>(string id, Transform parent)
     {
-        var go = Instantiate(GetIDGameObjectData(id).gameObject, parent);
-        return go.GetComponent<ResourceCountPanel>();
+        var obj = PrefabUtility.InstantiatePrefab(GetIDGameObjectData(id), parent);
+        var go = (GameObject)obj;
+        return go.GetComponent<T>();
     }
-
-    public ProgressBarUI InstantiateProgressBar(string id, Transform parent)
-    {
-        var go = Instantiate(GetIDGameObjectData(id).gameObject, parent);
-        return go.GetComponent<ProgressBarUI>();
-    }
+#endif
 
     public GameObject GetLootPrefab(ResourceType resourceType)
     {
