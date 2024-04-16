@@ -8,7 +8,10 @@ public class AbstractUI : MainRefs
     public Transform iconGridFolder;
     public GameObject craftPanel;
     public IconGrid iconGrid;
-    private SharedObjects sharedObjects => GetRef<SharedObjects>();
+    [IDGameObjectData]
+    public string panelContainerPrefabID, openResourceProducerPanelID,
+        openContainerResourcePanelID, needResourcePanelID, craftBarID, resourceCountPanelID;
+    protected SharedObjects sharedObjects => GetRef<SharedObjects>();
 
     protected virtual void Awake()
     {
@@ -67,13 +70,13 @@ public class AbstractUI : MainRefs
 
     public void CreateOpenResourceProducerPanel(AbstractResourceProducer producer)
     {
-        var go = Instantiate(sharedObjects.GetIDGameObjectData("openResourcePanelPrefab"), panelsFolder);
+        var go = Instantiate(sharedObjects.GetIDGameObjectData(openResourceProducerPanelID), panelsFolder);
         go.GetComponent<AbstractPanel>().Init(new object[] { producer });
     }
 
     public void CreateOpenContainerPanel(AbstractContainer container)
     {
-        var go = Instantiate(sharedObjects.GetIDGameObjectData("openContainerResourcePanelPrefab"), panelsFolder);
+        var go = Instantiate(sharedObjects.GetIDGameObjectData(openContainerResourcePanelID), panelsFolder);
         go.GetComponent<AbstractPanel>().Init(new object[] { container });
         container.OnPlayerTapObject();
     }
@@ -82,12 +85,23 @@ public class AbstractUI : MainRefs
     {
         foreach (var item in list)
         {
-            var panel = iconGrid.CreateIcon<ResourceCountPanel>(sharedObjects.GetIDGameObjectData("needResourcePanel"), observable.GetObjectObservableTransform(), sharedObjects.GetIDGameObjectData("panelContainerPrefab"));
+            var panel = iconGrid.CreateIcon<ResourceCountPanel>(sharedObjects.GetIDGameObjectData(needResourcePanelID), observable.GetObjectObservableTransform(), sharedObjects.GetIDGameObjectData(panelContainerPrefabID));
             panel.resourceType = item.resourceType;
             panel.icon.sprite = sharedObjects.GetResourceSprite(item.resourceType);
             panel.addStringToEnd = $"/{item.count}";
             panel.updatePosition = false;
             panel.Init(observable);
         }
+    }
+
+    public T CreateIcon<T>(string iconID, Transform target, string panelContainerID = "default")
+    {
+        if (panelContainerID == "default") panelContainerID = panelContainerPrefabID;
+        return iconGrid.CreateIcon<T>(sharedObjects.GetIDGameObjectData(iconID), target, sharedObjects.GetIDGameObjectData(panelContainerID));
+    }
+
+    public void DestroyAllIcons(Transform target)
+    {
+        iconGrid.DestroyAllIcons(transform);
     }
 }

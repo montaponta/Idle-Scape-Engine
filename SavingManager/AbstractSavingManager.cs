@@ -129,10 +129,10 @@ public abstract class AbstractSavingManager : MainRefs
         //if (!focus) SaveData();
     }
 
-    private void OnApplicationQuit()
+    protected virtual void OnApplicationQuit()
     {
         if (SceneManager.GetActiveScene().name == "Loading Scene") return;
         if ((DateTime.UtcNow - lastSaveDate).TotalSeconds > 0.5f) SaveData();
-        GetRef<QuestsManager>().ApplicationQuit();
+        //GetRef<QuestsManager>().ApplicationQuit();
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine;
 public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResourceReciever, IObjectObservable
 {
     public RequiredResourcesSO SOData;
-    public bool isNeedTap, isCreateResourcesPanel;
+    public bool isNeedTap, isCreateResourcesPanel, isEnable;
     public CollectAnimationType openTypeAnim = CollectAnimationType.none;
     public Vector2 spawnForceRangeZ, spawnForceRangeXY;
     public Transform lootSpawnPoint, openPoint;
@@ -15,7 +15,7 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
     public List<SoundType> soundTypes;
     [SerializeField] private List<AbstractContainer> parentContainersList;
     public string id;
-    protected bool isHacked, isInHackProcess, isEnable;
+    protected bool isHacked, isInHackProcess;
     private Timer unlockTimer = new Timer(TimerMode.counterFixedUpdate);
     [HideInInspector] public AbstractResourceProducer resourceProducer;
     public UnsubscribingDelegate OnContainerOpenedAction = new UnsubscribingDelegate();

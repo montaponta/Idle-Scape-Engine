@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Initializer : MonoBehaviour
 {
+	public List<MainRefs> systemRefs;
 	private List<MonoBehaviour> sharedObjectsReadyList = new List<MonoBehaviour>();
 	private bool isInitializeDone;
 
@@ -28,11 +29,8 @@ public class Initializer : MonoBehaviour
 		}
 	}
 
-	public void AddReadySharedObject(MonoBehaviour obj)
+	public void AddReadySharedObject(MainRefs obj)
 	{
-		var v = typeof(MainRefs);
-		var arr = v.GetFields();
-
 		if (isInitializeDone)
 		{
 			Debug.LogError($"Object arrived after initialization: {obj}");
@@ -46,7 +44,7 @@ public class Initializer : MonoBehaviour
 
 		sharedObjectsReadyList.Add(obj);
 
-		if (sharedObjectsReadyList.Count == arr.Length)
+		if (sharedObjectsReadyList.Count == systemRefs.Count)
 		{
 			isInitializeDone = true;
 			var mainRefs = FindObjectsOfType<MainRefs>();
