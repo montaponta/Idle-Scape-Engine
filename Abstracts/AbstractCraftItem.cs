@@ -19,6 +19,7 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
     private GameObject ghostItem;
     public UnsubscribingDelegate OnAssemblingCompleteUnsubscribe = new UnsubscribingDelegate();
     public Action<object[]> OnObjectObservableChanged;
+    private ProgressBarUI bar;
 
     protected override void Start()
     {
@@ -29,6 +30,7 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
     protected virtual void FixedUpdate()
     {
         craftTimer.TimerUpdate();
+        if (bar) bar.SetValue(craftTimer.GetTimeNormalized());
     }
 
     protected void ImproveLevel()
@@ -101,6 +103,8 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
         OnAssemblingStartProcedure();
         OnAssemblingStart?.Invoke();
         OnAssemblingStartSendItem?.Invoke(this);
+        GetRef<AbstractUI>().DestroyAllIcons(transform);
+        bar = GetRef<AbstractUI>().CreateIcon<ProgressBarUI>(PrefabType.progressBarPrefab, transform);
     }
 
     public void ChangeAssemblingTime(float time)
@@ -122,6 +126,7 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
         OnAssemblingComplete?.Invoke();
         OnAssemblingCompleteSendItem?.Invoke(this);
         OnAssemblingCompleteUnsubscribe.Invoke();
+        GetRef<AbstractUI>().DestroyIcon(transform, bar.gameObject);
     }
 
     protected virtual void OnAssemblingStartProcedure() { }

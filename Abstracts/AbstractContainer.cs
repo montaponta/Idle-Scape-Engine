@@ -34,7 +34,7 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
         if (!isHacked && isAlreadyHacked) OnContainerOpened();
     }
 
-    private void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         unlockTimer.TimerUpdate();
         if (bar) bar.SetValue(unlockTimer.GetTimeNormalized());
@@ -46,9 +46,9 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
         {
             isInHackProcess = true;
             unlockTimer.OnTimerReached += OnContainerOpened;
-            GetRef<AbstractUI>().iconGrid.DestroyAllIcons(transform);
+            GetRef<AbstractUI>().DestroyAllIcons(transform);
             var sharedObjects = GetRef<SharedObjects>();
-            bar = GetRef<AbstractUI>().iconGrid.CreateIcon<ProgressBarUI>(sharedObjects.GetIDGameObjectData("roundBarPrefab"), transform, sharedObjects.GetIDGameObjectData("panelContainerPrefab"));
+            bar = GetRef<AbstractUI>().CreateIcon<ProgressBarUI>(PrefabType.progressBarPrefab, transform);
             var time = (float)SOData.GetValueByTag("OpenTime", typeof(float));
             unlockTimer.StartTimer(time);
         }
@@ -57,7 +57,7 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
         GetRef<ClickablesContainersHandler>().StartOpenContainer(this, unit);
     }
 
-    public void StopOpeningContainer()
+    public virtual void StopOpeningContainer()
     {
         if (!unlockTimer.isTimerActive) return;
         isInHackProcess = false;
@@ -75,9 +75,7 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
         OnContainerOpenedProcedure();
         GetRef<ClickablesContainersHandler>().OnContainerOpened(this);
         ShowHidePreview(false);
-        GetRef<AbstractUI>().iconGrid.DestroyIcon(transform, bar.gameObject);
-        //var waypoint = GetComponentInChildren<Waypoint_Indicator>();
-        //if (waypoint) Destroy(waypoint.gameObject);
+        GetRef<AbstractUI>().DestroyIcon(transform, bar.gameObject);
         GetRef<AbstractSavingManager>().GetSavingData<ContainerSavingData>().SaveContainerState(this);
 
         foreach (var item in alsoOpenContainersList)
@@ -93,18 +91,18 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
         GetRef<ClickablesContainersHandler>().OnPlayerTapObject(this);
     }
 
-    public void CreateOpenContainerTask()
+    public virtual void CreateOpenContainerTask()
     {
         isInHackProcess = true;
         GetRef<ClickablesContainersHandler>().AddNewOpenContainerTask(this);
     }
 
-    public List<ProduceResource> GetLootItems()
+    public virtual List<ProduceResource> GetLootItems()
     {
         return resourceProducer.SOData.itemsList;
     }
 
-    public bool IsHacked()
+    public virtual bool IsHacked()
     {
         return isHacked;
     }
@@ -114,7 +112,7 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
         isHacked = state;
     }
 
-    public bool IsContainerEnable()
+    public virtual bool IsContainerEnable()
     {
         return isEnable;
     }
@@ -122,11 +120,6 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
     public virtual void SetEnableState(bool state, AbstractContainer childContainer)
     {
         isEnable = state;
-    }
-
-    public Transform GetTransform()
-    {
-        return transform;
     }
 
     public virtual bool IsVisible()
@@ -139,37 +132,37 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
         transform.parent.gameObject.SetActive(b);
     }
 
-    public CollectAnimationType GetOpenTypeAnim()
+    public virtual CollectAnimationType GetOpenTypeAnim()
     {
         return openTypeAnim;
     }
 
-    public Timer GetUnlockTimer()
+    public virtual Timer GetUnlockTimer()
     {
         return unlockTimer;
     }
 
-    public Transform GetOpenPoint()
+    public virtual Transform GetOpenPoint()
     {
         return openPoint;
     }
 
-    public bool IsNeedTap()
+    public virtual bool IsNeedTap()
     {
         return isNeedTap;
     }
 
-    public bool IsInHackProcess()
+    public virtual bool IsInHackProcess()
     {
         return isInHackProcess;
     }
 
-    public List<SoundType> GetSoundTypes()
+    public virtual List<SoundType> GetSoundTypes()
     {
         return soundTypes;
     }
 
-    public void IncreaseOpenUnitsCount()
+    public virtual void IncreaseOpenUnitsCount()
     {
         unlockTimer.count++;
     }
@@ -206,7 +199,7 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
         if (parentContainers.Any()) parentContainers[0].SetEnableState(isEnable, this);
     }
 
-    public void ShowHidePreview(bool b)
+    public virtual void ShowHidePreview(bool b)
     {
         foreach (Transform item in transform.parent)
         {
@@ -253,7 +246,7 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
         return v.count;
     }
 
-    public List<CollectablesItemCount> GetPrices(bool isFullPricesList = false)
+    public virtual List<CollectablesItemCount> GetPrices(bool isFullPricesList = false)
     {
         List<CollectablesItemCount> pricesList = new List<CollectablesItemCount>();
 
