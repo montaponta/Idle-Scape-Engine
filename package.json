@@ -1,10 +1,13 @@
 {
   "name": "com.idleengine.idlescapeengine",
   "displayName": "IdleScape Engine",
-  "version": "0.0.6",
+  "version": "0.1.0",
   "description": "Engine for Idle games with loot, build and craft mechanics",
   "repository": {
     "url": "https://github.com/multiplytencom/Idle-Scape-Engine.git",
     "type": "git"
+  },
+  "dependencies": {
+    "com.idleengine.idlescapeengine.changeable": "1.0.0"
   }
 }
