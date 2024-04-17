@@ -57,3 +57,9 @@ public enum ResourceAnimationType
 {
     none, scale, treeVibration
 }
+
+public enum PrefabType
+{
+    none, craftBar, panelContainer, openResourceProducerPanel, openContainerResourcePanel,
+    needResourcePanel, resourceCountPanel, resourceProducerPanel, ñharacter
+}

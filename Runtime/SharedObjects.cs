@@ -8,7 +8,7 @@ public class SharedObjects : MainRefs
     public static SharedObjects shared;
     public List<ResourceTypeSpriteData> resourceTypeSpriteDatasList;
     public List<IDGameObjectData> iDGameObjectDatasList;
-
+    
     private void Awake()
     {
         shared = this;
@@ -74,8 +74,14 @@ public class SharedObjects : MainRefs
     }
 #endif
 
+    public T InstantiatePrefabType<T>(PrefabType type, Transform parent, bool isPrefab = false)
+    {
+        if (!isPrefab) return InstantiateObject<T>(type.ToString(), parent);
+        else return InstantiatePrefab<T>(type.ToString(), parent);
+    }
+
     public GameObject GetLootPrefab(ResourceType resourceType)
     {
-        return GetIDGameObjectData($"{resourceType}_Loot");
+        return GetIDGameObjectData(resourceType.ToString());
     }
 }
