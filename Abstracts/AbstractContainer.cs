@@ -6,7 +6,7 @@ using UnityEngine;
 public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResourceReciever, IObjectObservable
 {
     public RequiredResourcesSO SOData;
-    public bool isNeedTap, isCreateResourcesPanel, isEnable;
+    public bool isNeedTap, isCreateResourcesPanel, isEnable = true;
     public CollectAnimationType openTypeAnim = CollectAnimationType.none;
     public Vector2 spawnForceRangeZ, spawnForceRangeXY;
     public Transform lootSpawnPoint, openPoint;
