@@ -146,7 +146,7 @@ public class Main : MainRefs
     /// <param name="includeInactive"></param>
     /// <param name="findFlag"></param>
     /// <returns></returns>
-    public static T GetTransformChild<T>(Transform obj, string name, bool includeInactive = false, int findFlag = 0) where T : Component
+    public T GetTransformChild<T>(Transform obj, string name, bool includeInactive = false, int findFlag = 0) where T : Component
     {
         var arr = obj.GetComponentsInChildren<T>(includeInactive);
         var component = default(T);
