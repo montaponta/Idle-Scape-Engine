@@ -8,7 +8,7 @@ public class SharedObjects : MainRefs
     public static SharedObjects shared;
     public List<ResourceTypeSpriteData> resourceTypeSpriteDatasList;
     public List<IDGameObjectData> iDGameObjectDatasList;
-    
+
     private void Awake()
     {
         shared = this;
@@ -57,6 +57,19 @@ public class SharedObjects : MainRefs
 
         var index = UnityEngine.Random.Range(0, arr.Count());
         return arr[index];
+    }
+
+    public string[] GetArrIDBasedOnDefaultID(string id)
+    {
+        var arr = iDGameObjectDatasList.Where(a => a.id.Contains(id)).Select(a => a.id).ToArray();
+
+        if (!arr.Any())
+        {
+            Debug.LogError($"No object for: {id}");
+            return null;
+        }
+
+        return arr;
     }
 
     public T InstantiateObject<T>(string id, Transform parent)
