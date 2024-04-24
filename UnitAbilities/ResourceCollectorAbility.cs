@@ -37,7 +37,7 @@ public class ResourceCollectorAbility : AbstractUnitAbility, IObjectObservable
         if (value == 1) isCollectingAnimFinished = true;
     }
 
-    public void TakeResource()
+    public virtual void TakeResource()
     {
         if (!resourceProducer || resourceProducer.getResourceCoroutine != null) return;
         var type = unit.GetRef<CollectAndCraftFunctions>().CheckResourceProducerNeedConditions(resourceProducer.GetSOData()).needType;
@@ -46,7 +46,7 @@ public class ResourceCollectorAbility : AbstractUnitAbility, IObjectObservable
         resourceProducer.GetResource(requiredItemCount.resourceType, count, this);
     }
 
-    public void RecieveResource(float count, float remainCount, ProduceResource produceResource)
+    public virtual void RecieveResource(float count, float remainCount, ProduceResource produceResource)
     {
         if (requiredItemCount == null) return;
         requiredItemCount.count -= count;
@@ -79,7 +79,7 @@ public class ResourceCollectorAbility : AbstractUnitAbility, IObjectObservable
         OnObjectObservableChanged?.Invoke(arr);
     }
 
-    public void OnResourceProducerEmpty()
+    public virtual void OnResourceProducerEmpty()
     {
         if (reservedCollectables.storage)
         {
@@ -96,14 +96,14 @@ public class ResourceCollectorAbility : AbstractUnitAbility, IObjectObservable
         else unit.SetActionTypeForced(UnitActionType.idler);
     }
 
-    public float GetBackpackCapacity(ResourceType resourceType)
+    public virtual float GetBackpackCapacity(ResourceType resourceType)
     {
         var backpack = unit.GetRef<CollectAndCraftFunctions>().GetCraftItem(ResourceType.backpack);
         var baseCapacity = (float)backpack.SOData.GetValueByTag("capacity", typeof(float));
         return baseCapacity * backpack.level;
     }
 
-    public float GetBackpackFreeSpace(ResourceType resourceType)
+    public virtual float GetBackpackFreeSpace(ResourceType resourceType)
     {
         float busySpace = 0;
 
@@ -118,7 +118,7 @@ public class ResourceCollectorAbility : AbstractUnitAbility, IObjectObservable
         return freeSpace;
     }
 
-    public void UnloadBackpack()
+    public virtual void UnloadBackpack()
     {
         foreach (var item in backpackList)
         {
@@ -131,7 +131,7 @@ public class ResourceCollectorAbility : AbstractUnitAbility, IObjectObservable
         reservedCollectables = (null, ResourceType.none, 0);
     }
 
-    public void ClearBackpack()
+    public virtual void ClearBackpack()
     {
         var types = backpackList.Select(a => a.resourceType);
         backpackList.Clear();
@@ -145,7 +145,7 @@ public class ResourceCollectorAbility : AbstractUnitAbility, IObjectObservable
         }
     }
 
-    public void ShowTool(bool b)
+    public virtual void ShowTool(bool b)
     {
         foreach (var item in toolsGOPairs.Values) item.SetActive(false);
         if (!b || resourceProducer == null) return;
@@ -155,7 +155,7 @@ public class ResourceCollectorAbility : AbstractUnitAbility, IObjectObservable
         if (needType != ResourceType.none) toolsGOPairs[needType].SetActive(b);
     }
 
-    public float GetCraftTime(float baseTime)
+    public virtual float GetCraftTime(float baseTime)
     {
         return baseTime;
     }
