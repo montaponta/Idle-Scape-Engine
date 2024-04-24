@@ -4,8 +4,7 @@ using UnityEngine;
 public class AbstractUI : MainRefs
 {
     public static AbstractUI shared;
-    public Transform panelsFolder;
-    public Transform iconGridFolder;
+    public Transform panelsFolder,iconGridFolder, questsPanelsFolder;
     public IconGrid iconGrid;
 
     protected SharedObjects sharedObjects => GetRef<SharedObjects>();
