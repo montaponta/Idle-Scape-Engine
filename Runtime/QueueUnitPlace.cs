@@ -45,6 +45,7 @@ public class QueueUnitPlace : MainRefs
         return queueLength;
     }
 
+    public virtual void SetUnitStateIndex(AbstractUnit unit, int stateIndex) { }
     public virtual void OnQueuePlaceReached(AbstractUnit unit) { }
 
     public List<AbstractUnit> GetUnitsList()
