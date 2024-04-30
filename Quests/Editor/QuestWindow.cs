@@ -16,11 +16,12 @@ public class QuestWindow : EditorWindow, IGeneralFunctionalWindow
 	private AbstractQuestExtension[] extensionsArr;
 	private List<float> dataHeightList = new List<float>();
 	private ListPopupWindow popup;
-	private bool isStopDraw;
+	private bool isStopDraw, isOptimize;
 
 	public void SetTargetObject(Quests target)
 	{
 		targetObject = target;
+		isOptimize = target.optimize;
 	}
 
 	private void OnGUI()
@@ -31,6 +32,7 @@ public class QuestWindow : EditorWindow, IGeneralFunctionalWindow
 			return;
 		}
 
+		if (delayCounter == -1) isOptimize = targetObject.optimize;
 		extensionsArr = targetObject.GetComponents<AbstractQuestExtension>();
 		EditorGUILayout.BeginHorizontal();
 		var icon = Resources.Load<Texture>("Lens");
@@ -93,7 +95,7 @@ public class QuestWindow : EditorWindow, IGeneralFunctionalWindow
 
 	private void OnDelayCounterFinished()
 	{
-		targetObject.isCanOptimize = true;
+		if (!targetObject.optimize) isOptimize = true;
 		delayCounter = -1;
 	}
 
@@ -233,7 +235,7 @@ public class QuestWindow : EditorWindow, IGeneralFunctionalWindow
 
 	private bool CheckOptimizationConditions(Rect rect)
 	{
-		if (!targetObject.isCanOptimize || rect.y == 0) return false;
+		if (!isOptimize || rect.y == 0) return false;
 		if (dataHeightList.Count < targetObject.questDatasList.Count) return false;
 		Event e = Event.current;
 		var mousePosY = e.mousePosition.y;
@@ -578,7 +580,7 @@ public class QuestWindow : EditorWindow, IGeneralFunctionalWindow
 	private void ClearDataHeightList(int delayCount)
 	{
 		dataHeightList.Clear();
-		targetObject.isCanOptimize = false;
+		isOptimize = false;
 		delayCounter = delayCount;
 		isStopDraw = true;
 	}

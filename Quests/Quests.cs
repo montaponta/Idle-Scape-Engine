@@ -14,7 +14,8 @@ public class Quests : MainRefs
     public string startTag;
     public List<QuestTemplate> questTemplatesList = new List<QuestTemplate>();
     public bool isQuestSystemActive = true;
-    public bool isCanOptimize = true;
+    public bool optimize = true;
+
 
     private void Awake()
     {
