@@ -12,12 +12,12 @@ public class ResourceProducerSOEditor : Editor
         DrawDefaultInspector();
         if (GUILayout.Button("Create OpenTime"))
         {
-            UtilsInspectorFunctions.AddOpenTimeParamsToSO(container);
+            EngineUtilsFunctions.AddOpenTimeParamsToSO(container);
             EditorUtility.SetDirty(container);
         }
-        if (GUILayout.Button("Create Name и Description"))
+        if (GUILayout.Button("Create NameDescription"))
         {
-            UtilsInspectorFunctions.AddNameDescriptionParamsToSO(container);
+            EngineUtilsFunctions.AddNameDescriptionParamsToSO(container);
             EditorUtility.SetDirty(container);
         }
 	}
@@ -32,12 +32,12 @@ public class CraftItemSOEditor : Editor
         DrawDefaultInspector();
         if (GUILayout.Button("Create OpenTime"))
         {
-            UtilsInspectorFunctions.AddOpenTimeParamsToSO(container);
+            EngineUtilsFunctions.AddOpenTimeParamsToSO(container);
             EditorUtility.SetDirty(container);
         }
-        if (GUILayout.Button("Create Name и Description"))
+        if (GUILayout.Button("Create NameDescription"))
         {
-            UtilsInspectorFunctions.AddNameDescriptionParamsToSO(container);
+            EngineUtilsFunctions.AddNameDescriptionParamsToSO(container);
             EditorUtility.SetDirty(container);
         }
 	}
@@ -50,14 +50,14 @@ public class RequiredResourcesSOEditor : Editor
     {
         RequiredResourcesSO container = (RequiredResourcesSO)target;
         DrawDefaultInspector();
-        if (GUILayout.Button("Добавить OpenTime"))
+        if (GUILayout.Button("Create OpenTime"))
         {
-            UtilsInspectorFunctions.AddOpenTimeParamsToSO(container);
+            EngineUtilsFunctions.AddOpenTimeParamsToSO(container);
             EditorUtility.SetDirty(container);
         }
-        if (GUILayout.Button("Добавить Name и Description"))
+        if (GUILayout.Button("Create NameDescription"))
         {
-            UtilsInspectorFunctions.AddNameDescriptionParamsToSO(container);
+            EngineUtilsFunctions.AddNameDescriptionParamsToSO(container);
             EditorUtility.SetDirty(container);
         }
     }

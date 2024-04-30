@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
-public class UtilsInspectorFunctions
+public class EngineUtilsFunctions
 {
-    
 
 //    public void AddShopKeysToI2Asset(bool overrideStrings = true)
 //    {

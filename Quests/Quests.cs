@@ -50,7 +50,8 @@ public class Quests : MainRefs
 
     private void OnDestroy()
     {
-        GetRef<QuestsManager>().RemoveQuestSystemFromPair(this);
+        var questManager = GetRef<QuestsManager>();
+        if (questManager) questManager.RemoveQuestSystemFromPair(this);
     }
 
     private void Update()
