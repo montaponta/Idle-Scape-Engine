@@ -50,9 +50,9 @@ public class CollectAndCraftFunctions : MainRefs
         return (ResourceType.none, 0, true);
     }
 
-    public (ResourceType type, float needCountOrLevel, bool canOpen) CheckCraftItemNeedConditions(AbstractCraftItem craftItem)
+    public (ResourceType type, float needCountOrLevel, bool canOpen, NeedConditionType needType) CheckCraftItemNeedConditions(AbstractCraftItem craftItem)
     {
-        List<(ResourceType, float, bool)> list = new List<(ResourceType, float, bool)>();
+        List<(ResourceType, float, bool, NeedConditionType)> list = new List<(ResourceType, float, bool, NeedConditionType needType)>();
         var SOData = craftItem.SOData;
 
         foreach (var item in SOData.needOtherResourceList)
@@ -61,7 +61,7 @@ public class CollectAndCraftFunctions : MainRefs
             var needCraftItem = GetCraftItem(item.needResource);
             if (needCraftItem == null) continue;
             if (needCraftItem.level < item.needResourceLevel)
-                list.Add((item.needResource, item.needResourceLevel, false));
+                list.Add((item.needResource, item.needResourceLevel, false, NeedConditionType.craftItem));
         }
 
         var prices = craftItem.GetCraftPrices(craftItem.level + 1, craftItem.SOData.GetIPricesFromNeedResourceList());
@@ -69,7 +69,7 @@ public class CollectAndCraftFunctions : MainRefs
         foreach (var item in prices)
         {
             var existResource = HaveStoragesThisResource(item.Item1.resourceType, item.Item1.count, craftItem);
-            list.Add((item.Item1.resourceType, item.Item1.count, existResource));
+            list.Add((item.Item1.resourceType, item.Item1.count, existResource, NeedConditionType.collectableResource));
         }
 
         prices = craftItem.GetCraftPrices(craftItem.level + 1, craftItem.SOData.GetIPricesFromNeedInventoryResourceList(), true);
@@ -77,7 +77,7 @@ public class CollectAndCraftFunctions : MainRefs
         foreach (var item in prices)
         {
             var exist = GetRef<AbstractSavingManager>().GetSavingData<InventorySavingData>().GetInventoryCount((ResourceType)item.Item2.GetOtherParameters()[0], item.Item1.resourceType) >= item.Item1.count;
-            list.Add((item.Item1.resourceType, item.Item1.count, exist));
+            list.Add((item.Item1.resourceType, item.Item1.count, exist, NeedConditionType.inventory));
         }
 
         if (list.Any())
@@ -87,7 +87,7 @@ public class CollectAndCraftFunctions : MainRefs
             else return list.First();
         }
 
-        return (ResourceType.none, 0, true);
+        return (ResourceType.none, 0, true, NeedConditionType.none);
     }
 
     public AbstractCraftItem GetCraftItem(ResourceType type)
