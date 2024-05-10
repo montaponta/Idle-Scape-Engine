@@ -4,7 +4,7 @@ using UnityEngine;
 public class AbstractUI : MainRefs
 {
     public static AbstractUI shared;
-    public Transform panelsFolder,iconGridFolder, questsPanelsFolder;
+    public Transform panelsFolder, iconGridFolder, questsPanelsFolder;
     public IconGrid iconGrid;
 
     protected SharedObjects sharedObjects => GetRef<SharedObjects>();
@@ -64,21 +64,25 @@ public class AbstractUI : MainRefs
         return (GetLocalizedString(keyName, name), GetLocalizedString(keyDescription, description));
     }
 
-    public virtual void CreateOpenResourceProducerPanel(AbstractResourceProducer producer)
+    public virtual AbstractPanel CreateOpenResourceProducerPanel(AbstractResourceProducer producer)
     {
-        sharedObjects.InstantiatePrefabType<AbstractPanel>(PrefabType.openResourceProducerPanel, panelsFolder)
-            .Init(new object[] { producer });
+        var panel = sharedObjects.InstantiatePrefabType<AbstractPanel>(PrefabType.openResourceProducerPanel, panelsFolder);
+        panel.Init(new object[] { producer });
+        return panel;
     }
 
-    public virtual void CreateOpenContainerPanel(AbstractContainer container)
+    public virtual AbstractPanel CreateOpenContainerPanel(AbstractContainer container)
     {
-        sharedObjects.InstantiatePrefabType<AbstractPanel>(PrefabType.openContainerResourcePanel, panelsFolder)
-            .Init(new object[] { container });
+        var panel = sharedObjects.InstantiatePrefabType<AbstractPanel>(PrefabType.openContainerResourcePanel, panelsFolder);
+        panel.Init(new object[] { container });
         container.OnPlayerTapObject();
+        return panel;
     }
 
-    public virtual void CreateNeedResourcePanel(IObjectObservable observable, List<CollectablesItemCount> list)
+    public virtual List<AbstractPanel> CreateNeedResourcePanel(IObjectObservable observable, List<CollectablesItemCount> list)
     {
+        List<AbstractPanel> panels = new List<AbstractPanel>();
+
         foreach (var item in list)
         {
             var panel = CreateIcon<ResourceCountPanel>(PrefabType.needResourcePanel, observable.GetObjectObservableTransform());
@@ -87,7 +91,9 @@ public class AbstractUI : MainRefs
             panel.addStringToEnd = $"/{item.count}";
             panel.updatePosition = false;
             panel.Init(observable);
+            panels.Add(panel);
         }
+        return panels;
     }
 
     public virtual T CreateIcon<T>(PrefabType type, Transform target, PrefabType panelContainerType = PrefabType.none)

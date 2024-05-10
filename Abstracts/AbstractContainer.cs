@@ -71,7 +71,7 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
         isInHackProcess = false;
         SetEnableState(true, null);
         SetHackedState(true);
-        OnContainerOpenedAction?.Invoke();
+        OnContainerOpenedAction.Invoke();
         OnContainerOpenedProcedure();
         GetRef<ClickablesContainersHandler>().OnContainerOpened(this);
         ShowHidePreview(false);
