@@ -126,14 +126,14 @@ public class ResourceCollectorAbility : AbstractUnitAbility, IObjectObservable
             reservedCollectables.storage.ReceiveResource(item.resourceType, item.count);
         }
 
-        backpackList.Clear();
+        ClearBackpack();
         requiredItemCount = null;
         reservedCollectables = (null, ResourceType.none, 0);
     }
 
     public virtual void ClearBackpack()
     {
-        var types = backpackList.Select(a => a.resourceType);
+        var types = backpackList.Select(a => a.resourceType).ToArray();
         backpackList.Clear();
 
         foreach (var item in types)
