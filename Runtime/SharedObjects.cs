@@ -78,6 +78,13 @@ public class SharedObjects : MainRefs
         return go.GetComponent<T>();
     }
 
+    public T InstantiateObjectBasedOnDefaultID<T>(string id, Transform parent)
+    {
+        var randomID = GetRandomIDBasedOnDefaultID(id);
+        var go = Instantiate(GetIDGameObjectData(randomID), parent);
+        return go.GetComponent<T>();
+    }
+
 #if UNITY_EDITOR
     public T InstantiatePrefab<T>(string id, Transform parent)
     {
@@ -91,6 +98,13 @@ public class SharedObjects : MainRefs
     {
         if (!isPrefab) return InstantiateObject<T>(type.ToString(), parent);
         else return InstantiatePrefab<T>(type.ToString(), parent);
+    }
+
+    public T InstantiatePrefabTypeBasedOnDefaultPrefabType<T>(PrefabType type, Transform parent, bool isPrefab = false)
+    {
+        var randomID = GetRandomIDBasedOnDefaultID(type.ToString());
+        if (!isPrefab) return InstantiateObject<T>(randomID, parent);
+        else return InstantiatePrefab<T>(randomID, parent);
     }
 
     public GameObject GetLootPrefab(ResourceType resourceType)
