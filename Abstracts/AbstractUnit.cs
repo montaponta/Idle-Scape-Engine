@@ -212,6 +212,18 @@ public abstract class AbstractUnit : MainRefs, IIDExtention
         }
     }
 
+    public virtual Coroutine MoveToTarget(Vector3 pos, Action OnReachedDestination = null, float delayTime = 0)
+    {
+        var coroutine = StartCoroutine(MoveToTargetCoroutine(pos, OnReachedDestination, delayTime));
+        return coroutine;
+    }
+
+    public virtual Coroutine MoveToTarget(Transform target, Action OnReachedDestination = null, float delayTime = 0)
+    {
+        var coroutine = StartCoroutine(MoveToTargetCoroutine(target, OnReachedDestination, delayTime));
+        return coroutine;
+    }
+
     public virtual float GetWatchingDistance() { return 10; }
     public abstract IUnitData GetUnitData();
     public virtual void PlayAnimation(string animation, bool isPlay) { animator.SetBool(animation, isPlay); }

@@ -12,8 +12,8 @@ public class Main : MainRefs
 {
     public static Main shared;
     public Camera mainCamera;
-    public  Action<int> OnSceneLevelComlete;
-    public  Action OnCameraEndAlign;
+    public Action<int> OnSceneLevelComlete;
+    public Action OnCameraEndAlign;
     public DebugTools debugTools;
     public float speedMultiplayer = 1;
     public UnitActionPermissionHandler unitActionPermissionHandler;
@@ -254,5 +254,23 @@ public class Main : MainRefs
         }
 
         return list;
+    }
+
+    public Coroutine Invoke(Action action, float delay)
+    {
+        var coroutine = StartCoroutine(ActionCoroutine(action, delay));
+        return coroutine;
+    }
+
+    public Coroutine InvokeWaitUntil(Action action, Func<bool> func)
+    {
+        var coroutine = StartCoroutine(ActionCoroutine(action, func));
+        return coroutine;
+    }
+
+    public Coroutine InvokeDelayedActions(List<(Action action, float delayBetweenActions)> actions, float delay = 0.1f)
+    {
+        var coroutine = StartCoroutine(ActionCoroutine(actions, delay));
+        return coroutine;
     }
 }
