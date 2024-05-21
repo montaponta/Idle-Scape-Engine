@@ -59,7 +59,7 @@ public abstract class AbstractResourceProducer : MainRefs, IIDExtention, ISOData
 		getResourceCoroutine = StartCoroutine(GetResourceCoroutine(produceResource, needCount, resourceCollectorAbility));
 	}
 
-	protected IEnumerator GetResourceCoroutine(ProduceResource produceResource, float needCount, ResourceCollectorAbility resourceCollectorAbility)
+	protected virtual IEnumerator GetResourceCoroutine(ProduceResource produceResource, float needCount, ResourceCollectorAbility resourceCollectorAbility)
 	{
 		yield return new WaitForSeconds(produceResource.produceTime);
 		getResourceCoroutine = null;
@@ -104,7 +104,7 @@ public abstract class AbstractResourceProducer : MainRefs, IIDExtention, ISOData
 
 	protected virtual void GetResourceProcedure(ProduceResource produceResource, float canGive, ResourceCollectorAbility resourceCollectorAbility) { }
 
-	public float GetResourceProduceCount(ResourceType type)
+	public virtual float GetResourceProduceCount(ResourceType type)
 	{
 		var v = SOData.itemsList.Find(a => a.produceResourceType == type);
 		if (v != null) return v.produceCount;
@@ -119,7 +119,7 @@ public abstract class AbstractResourceProducer : MainRefs, IIDExtention, ISOData
 		return produceResource.maxProduceCount - resourceGiven[type];
 	}
 
-	public bool IsResourceProducerEmpty()
+	public virtual bool IsResourceProducerEmpty()
 	{
 		foreach (var item in SOData.itemsList)
 		{
