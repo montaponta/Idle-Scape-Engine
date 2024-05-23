@@ -208,10 +208,12 @@ public class CollectAndCraftFunctions : MainRefs
         return craftDatas[craftItem].readyUnitsList.Count == craftDatas[craftItem].unitsList.Count;
     }
 
-    public void AddUnitToCraftTask(AbstractCraftItem craftItem, AbstractUnit unit)
+    public void AddUnitToCraftTask(AbstractCraftItem craftItem, AbstractUnit unit, Action OnCraftComplete = null)
     {
         craftDatas[craftItem].unitsList.Add(unit);
-        craftItem.OnAssemblingCompleteUnsubscribe.AddListener(() => unit.SetActionTypeForced(UnitActionType.idler), true);
+        if (OnCraftComplete == null)
+            craftItem.OnAssemblingCompleteUnsubscribe.AddListener(() => unit.SetActionTypeForced(UnitActionType.idler), true);
+        else craftItem.OnAssemblingCompleteUnsubscribe.AddListener(OnCraftComplete);
     }
 
     public void AddUnitToCraftReadyList(AbstractCraftItem craftItem, AbstractUnit unit)
