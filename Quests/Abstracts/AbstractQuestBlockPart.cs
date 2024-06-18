@@ -43,7 +43,7 @@ public abstract class AbstractQuestBlockPart : ICloneable
 	public virtual object Clone()
 	{
 		var blockPart = (AbstractQuestBlockPart)MemberwiseClone();
-		blockPart.revertQuestsOnExitList = new List<RevertQuestsOnExit>(revertQuestsOnExitList);
+		blockPart.revertQuestsOnExitList = new List<RevertQuestsOnExit>();
 		return blockPart;
 	}
 
