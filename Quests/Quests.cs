@@ -39,6 +39,7 @@ public class Quests : MainRefs
                 if (GetRef<AbstractSavingManager>().GetSavingData<QuestsSavingData>().questPair[item.blockPart.GetFullTag(this)] == QuestProgressType.inProgress)
                 {
                     item.questBlock.OnQuestStartProcedure(item.blockPart);
+                    GetRef<QuestsManager>().QuestLaunched(item);
                 }
             }
 
