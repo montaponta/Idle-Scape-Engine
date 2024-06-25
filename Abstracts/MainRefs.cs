@@ -36,7 +36,7 @@ public class MainRefs : MonoBehaviour
             return (T)systemsPairs[typeof(T)];
         else
         {
-            var reference = FindObjectOfType<T>();
+            var reference = FindObjectOfType<T>(true);
             systemsPairs.Add(typeof(T), reference);
             return reference;
         }
