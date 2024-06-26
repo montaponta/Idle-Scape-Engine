@@ -82,8 +82,8 @@ public class QuestsManager : MainRefs
 	{
 		var fullTag = $"{tag}_{questSystemID}";
 		var pair = GetRef<AbstractSavingManager>().GetSavingData<QuestsSavingData>().questPair;
-		if (!pair.ContainsKey(fullTag)) return (false, QuestProgressType.none);
-		return (pair[fullTag] == QuestProgressType.completed, pair[fullTag]);
+        if (!pair.TryGetValue(fullTag, out var v)) return (false, QuestProgressType.none);
+        return (pair[fullTag] == QuestProgressType.completed, pair[fullTag]);
 	}
 
 	public (bool isComplete, QuestProgressType progressType) GetQuestState(string fullTag)

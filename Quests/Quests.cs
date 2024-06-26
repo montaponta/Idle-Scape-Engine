@@ -246,7 +246,8 @@ public class Quests : MainRefs
     {
         foreach (var item in questDatasList)
         {
-            item.questBlock.RevertTagsOnExit(item.blockPart);
+            if (GetRef<QuestsManager>().GetQuestState(item.blockPart.tag, item.questBlock.questSystemID).progressType == QuestProgressType.inProgress)
+                item.questBlock.RevertTagsOnExit(item.blockPart);
         }
     }
 }
