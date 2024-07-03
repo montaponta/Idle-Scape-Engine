@@ -85,14 +85,22 @@ public class SharedObjects : MainRefs
         return go.GetComponent<T>();
     }
 
-#if UNITY_EDITOR
     public T InstantiatePrefab<T>(string id, Transform parent)
     {
+        if (Application.isPlaying)
+        {
+            Debug.LogError("Prefab can be instantiated only in Editor mode");
+            return default(T);
+        }
+
+#if UNITY_EDITOR
         var obj = PrefabUtility.InstantiatePrefab(GetIDGameObjectData(id), parent);
         var go = (GameObject)obj;
         return go.GetComponent<T>();
-    }
 #endif
+        return default(T);
+    }
+
 
     public T InstantiatePrefabType<T>(PrefabType type, Transform parent, bool isPrefab = false)
     {

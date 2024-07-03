@@ -1,0 +1,18 @@
+{
+    "name": "IdleScapeEngine.Quests.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:eb21c2bc9fed6514f86dff6ba647ab53"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,11 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
+﻿using System.Collections.Generic;
 using System.Linq;
-using UnityEngine.UIElements;
-using UnityEditor.Experimental.SceneManagement;
-using UnityEditor.SceneManagement;
+using UnityEditor;
+using UnityEngine;
 
 [CustomEditor(typeof(IDManager))]
 public class IDManagerEditor : Editor
