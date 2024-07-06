@@ -4,7 +4,6 @@ using System.Linq;
 public class CraftItemsSavingData : AbstractSavingData
 {
     public Dictionary<string, CraftItemData> pairs = new Dictionary<string, CraftItemData>();
-    public int workerBedroomUnitsCount;
 
     public override bool IsDataEmpty()
     {

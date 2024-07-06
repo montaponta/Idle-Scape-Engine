@@ -23,6 +23,10 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
 
     protected override void Start()
     {
+        if (!GetRef<Main>().debugTools.isDebugActive)
+            GetRef<AbstractSavingManager>()
+                .GetSavingData<CraftItemsSavingData>()
+                .GetCraftItemState(this);
         SetItemLevel(level);
         craftTimer.OnTimerReached = AssemblingComplete;
     }

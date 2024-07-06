@@ -27,7 +27,10 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
     protected override void Start()
     {
         base.Start();
-        GetRef<AbstractSavingManager>().GetSavingData<ContainerSavingData>().GetContainerState(this);
+        if (!GetRef<Main>().debugTools.isDebugActive)
+            GetRef<AbstractSavingManager>()
+                .GetSavingData<ContainerSavingData>()
+                .GetContainerState(this);
         resourceProducer = GetComponent<AbstractResourceProducer>();
         if (!openPoint) openPoint = transform;
         ShowHidePreview(false);
