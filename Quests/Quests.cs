@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 
 public class Quests : MainRefs
@@ -106,6 +107,20 @@ public class Quests : MainRefs
     public void CheckDataBlock(List<QuestData> list, int index)
     {
         if (index > list.Count - 1) return;
+
+        if (list[index].questBlock == null)
+        {
+            foreach (var item in questModulesList)
+            {
+                if (item.GetDataList().Any(a => a.id == list[index].id))
+                    list[index].questBlock = item;
+#if UNITY_EDITOR
+                EditorUtility.SetDirty(this);
+#endif
+                break;
+            }
+        }
+
         if (list[index].blockPart == null)
             list[index].blockPart = list[index].questBlock.GetBlockPart(list[index].id);
     }

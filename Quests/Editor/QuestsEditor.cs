@@ -12,6 +12,7 @@ public class QuestsEditor : Editor
     private void OnEnable()
     {
         targetObject = (Quests)target;
+        targetObject.GetQuestModulsList();
         targetObject.CheckAllDataBlocks();
         if (!FindObjectOfType<QuestsManager>()) Debug.LogError("QuestManager absent!");
     }
@@ -19,7 +20,6 @@ public class QuestsEditor : Editor
 
     public override void OnInspectorGUI()
     {
-        targetObject.GetQuestModulsList();
         var content = new GUIContent { text = "Quest system ID" };
         content.tooltip = "If there are several quest systems in the project, this ID allows you to give each system uniqueness in order to avoid duplication of quest IDs";
         targetObject.questSystemID = EditorGUILayout.TextField(content, targetObject.questSystemID);
