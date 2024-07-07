@@ -8,7 +8,7 @@ public class Quests : MainRefs
 {
     public Vector2 scrollPos;
     public string questSystemID = Guid.NewGuid().ToString();
-    [HideInInspector] public List<AbstractQuestBlock> questModulesList;
+    public List<AbstractQuestBlock> questModulesList;
     public List<QuestData> questDatasList = new List<QuestData>();
     [HideInInspector] public IGeneralFunctionalWindow questWindow;
     [HideInInspector] public int insertBlockIndex;
@@ -113,12 +113,15 @@ public class Quests : MainRefs
             foreach (var item in questModulesList)
             {
                 if (item.GetDataList().Any(a => a.id == list[index].id))
+                {
                     list[index].questBlock = item;
-#if UNITY_EDITOR
-                EditorUtility.SetDirty(this);
-#endif
-                break;
+                    break;
+                }
             }
+
+#if UNITY_EDITOR
+            EditorUtility.SetDirty(this);
+#endif
         }
 
         if (list[index].blockPart == null)
