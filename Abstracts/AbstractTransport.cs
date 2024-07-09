@@ -10,8 +10,8 @@ public abstract class AbstractTransport : QueueUnitPlace, IIDExtention
 	[NonSerialized] public Vector3 defaultPos, defaultRot, targetPos, targetRot;
 	[NonSerialized] public float stateIndex;
 	protected int seatsBusyCount;
-	private Main main => GetRef<Main>();
-	private AbstractSavingManager savingManager => GetRef<AbstractSavingManager>();
+	protected Main main => GetRef<Main>();
+	protected AbstractSavingManager savingManager => GetRef<AbstractSavingManager>();
 
 	public virtual void OnTransportEnter(AbstractUnit unit)
 	{
