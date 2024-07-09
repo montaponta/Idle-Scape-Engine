@@ -6,22 +6,22 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "ResourceProducerData", menuName = "ScriptableObjects/ResourceProducerData")]
 public class ResourceProducerSO : ScriptableObject, IScriptableObjectData
 {
-	public List<ProduceResource> itemsList;
-	public List<AdditionalParameters> additionalParamsList = new List<AdditionalParameters>();
-	public float recoveryTime;
-	public float priority;
-	public int collectorsCount;
-	public float distanceToStop = 1;
+    public List<ProduceResource> itemsList;
+    public List<AdditionalParameters> additionalParamsList = new List<AdditionalParameters>();
+    public float recoveryTime;
+    public float priority;
+    public int collectorsCount;
+    public float distanceToStop = 1;
 
-	public List<AdditionalParameters> GetAdditionalParameters()
-	{
-		return additionalParamsList;
-	}
+    public List<AdditionalParameters> GetAdditionalParameters()
+    {
+        return additionalParamsList;
+    }
 
-	public float GetDistanceToStop()
-	{
-		return distanceToStop;
-	}
+    public float GetDistanceToStop()
+    {
+        return distanceToStop;
+    }
 
     public List<NeedInventoryResource> GetNeedInventoryResourceList()
     {
@@ -34,11 +34,11 @@ public class ResourceProducerSO : ScriptableObject, IScriptableObjectData
     }
 
     public List<NeedResource> GetNeedResourceList()
-	{
-		var list = itemsList.Where(a => a.needResource != null)
-			.ToDictionary(a => a.needResource).Keys.ToList();
-		return list;
-	}
+    {
+        var list = itemsList.Where(a => a.needResource != null)
+            .ToDictionary(a => a.needResource).Keys.ToList();
+        return list;
+    }
 
     public List<ResourceTypeID> GetNeedResourceTypeIDsList()
     {
@@ -47,24 +47,30 @@ public class ResourceProducerSO : ScriptableObject, IScriptableObjectData
 
     public List<ProduceResource> GetProduceResourceList()
     {
-		return itemsList;
+        return itemsList;
     }
 
     public object GetValueByTag(string tag, System.Type returnType)
-	{
-		var v = additionalParamsList.Find(a => a.paramName == tag);
+    {
+        var v = additionalParamsList.Find(a => a.paramName == tag);
 
-		if (v != null)
-		{
-			if (returnType == typeof(float))
-			{
-				System.Globalization.CultureInfo cultureInfo = new System.Globalization.CultureInfo("en-US");
-				return float.Parse(v.value, cultureInfo);
-			}
+        if (v != null)
+        {
+            if (returnType == typeof(float))
+            {
+                System.Globalization.CultureInfo cultureInfo = new System.Globalization.CultureInfo("en-US");
+                return float.Parse(v.value, cultureInfo);
+            }
 
-			if (returnType == typeof(string)) return v.value;
-		}
+            if (returnType == typeof(string)) return v.value;
+        }
 
-		return null;
-	}
+        return null;
+    }
+
+    public T GetValueByTag<T>(string tag)
+    {
+        var v = (T)GetValueByTag(tag, typeof(T));
+        return v != null ? v : default(T);
+    }
 }

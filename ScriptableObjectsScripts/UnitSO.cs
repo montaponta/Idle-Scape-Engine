@@ -25,7 +25,13 @@ public class UnitSO : ScriptableObject, IUnitData
 		return null;
 	}
 
-	public float GetMoveSpeed()
+    public T GetValueByTag<T>(string tag)
+    {
+        var v = (T)GetValueByTag(tag, typeof(T));
+        return v != null ? v : default(T);
+    }
+
+    public float GetMoveSpeed()
 	{
 		return moveSpeed;
 	}

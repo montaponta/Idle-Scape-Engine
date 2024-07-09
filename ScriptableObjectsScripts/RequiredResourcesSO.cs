@@ -47,6 +47,12 @@ public class RequiredResourcesSO : ScriptableObject, IScriptableObjectData
         return null;
     }
 
+    public T GetValueByTag<T>(string tag)
+    {
+        var v = (T)GetValueByTag(tag, typeof(T));
+        return v != null ? v : default(T);
+    }
+
     public List<NeedOtherResource> GetNeedOtherResourceList()
     {
         return needOtherResourceList;

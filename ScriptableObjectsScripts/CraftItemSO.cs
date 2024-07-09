@@ -43,7 +43,13 @@ public class CraftItemSO : ScriptableObject, IScriptableObjectData
 		return null;
 	}
 
-	public List<ICraftItemPrices> GetIPricesFromNeedResourceList()
+    public T GetValueByTag<T>(string tag)
+    {
+        var v = (T)GetValueByTag(tag, typeof(T));
+        return v != null ? v : default(T);
+    }
+
+    public List<ICraftItemPrices> GetIPricesFromNeedResourceList()
 	{
 		return needResourceList.Cast<ICraftItemPrices>().ToList();
 	}
