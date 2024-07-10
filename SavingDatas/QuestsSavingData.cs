@@ -33,4 +33,9 @@ public class QuestsSavingData : AbstractSavingData
 	{
 		ES3.Save(ToString(), this);
 	}
+
+    protected override void SaveDataObject(string key)
+    {
+        ES3.Save(ToString(), this, $"SaveFile_{key}.es3");
+    }
 }

@@ -20,7 +20,7 @@ public class CraftItemsSavingData : AbstractSavingData
         pairs.Clear();
     }
 
-    public override void SaveData(bool collectParams)
+    public override void SaveData(bool collectParams, bool isSave = true)
     {
         if (savingManager.dontSave) return;
         if (collectParams)
@@ -31,7 +31,7 @@ public class CraftItemsSavingData : AbstractSavingData
             }
         }
 
-        SaveDataObject();
+        if (isSave) SaveDataObject();
     }
 
     public void SaveCraftItemState(AbstractCraftItem craftItem)
@@ -67,6 +67,11 @@ public class CraftItemsSavingData : AbstractSavingData
     protected override void SaveDataObject()
     {
         ES3.Save(ToString(), this);
+    }
+
+    protected override void SaveDataObject(string key)
+    {
+        ES3.Save(ToString(), this, $"SaveFile_{key}.es3");
     }
 
     public class CraftItemData

@@ -13,10 +13,14 @@ public abstract class AbstractSavingManager : MainRefs
     [HideInInspector] public bool isSavingDataLoadComplete;
     public Timer playtimeTimer = new Timer(TimerMode.counterFixedUpdate, false, true);
     public Dictionary<Type, AbstractSavingData> savingDataPairs = new Dictionary<Type, AbstractSavingData>();
+    protected int sceneIndex;
 
     public static bool DontSave { get => shared.dontSave; set => shared.dontSave = value; }
     public static bool IsSavingDataLoadComplete => shared.isSavingDataLoadComplete;
     public static Timer PlaytimeTimer => shared.playtimeTimer;
+    public string customSavingDataPath => GetCustomSavingDataPath();
+
+    protected Main main => GetRef<Main>();
 
 
     protected virtual void Awake()
@@ -71,6 +75,16 @@ public abstract class AbstractSavingManager : MainRefs
         print("Saved");
     }
 
+    public virtual void SaveDataToPath(string key)
+    {
+        foreach (var item in savingDataPairs.Values)
+        {
+            item.SaveDataToPath(true, key);
+        }
+
+        ES3.Save("sceneIndex", sceneIndex, $"SaveFile_{key}.es3");
+    }
+
     public void DestroyData()
     {
         ES3.DeleteFile();
@@ -121,6 +135,11 @@ public abstract class AbstractSavingManager : MainRefs
     {
         //return shopSavingData.isAllAdsDisabled;
         return false;
+    }
+
+    public static string GetCustomSavingDataPath()
+    {
+        return "CustomSavingData.es3";
     }
 
     protected virtual void OnApplicationFocus(bool focus)

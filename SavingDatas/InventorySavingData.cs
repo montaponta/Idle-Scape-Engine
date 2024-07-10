@@ -132,7 +132,12 @@ public class InventorySavingData : AbstractSavingData, IObjectObservable
 		ES3.Save(ToString(), this);
 	}
 
-	public void AddObjectObserver(IObjectObserver observer)
+    protected override void SaveDataObject(string key)
+    {
+        ES3.Save(ToString(), this, $"SaveFile_{key}.es3");
+    }
+
+    public void AddObjectObserver(IObjectObserver observer)
 	{
 		OnObjectObservableChanged += observer.OnObjectObservableChanged;
 	}

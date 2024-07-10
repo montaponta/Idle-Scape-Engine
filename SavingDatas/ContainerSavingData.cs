@@ -28,7 +28,7 @@ public class ContainerSavingData : AbstractSavingData
 		}
 	}
 
-	public override void SaveData(bool collectParams)
+	public override void SaveData(bool collectParams, bool isSave = true)
 	{
 		if (savingManager.dontSave) return;
 		if (collectParams)
@@ -88,7 +88,12 @@ public class ContainerSavingData : AbstractSavingData
 		ES3.Save(ToString(), this);
 	}
 
-	public List<AbstractContainer> GetLootContainers()
+    protected override void SaveDataObject(string key)
+    {
+        ES3.Save(ToString(), this, $"SaveFile_{key}.es3");
+    }
+
+    public List<AbstractContainer> GetLootContainers()
 	{
 		var world = savingManager.GetRef<Main>().GetWorldGO();
 		var lootContainers = world.GetComponentsInChildren<AbstractContainer>(true).ToList();
