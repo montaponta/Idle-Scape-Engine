@@ -64,6 +64,7 @@ public abstract class AbstractSavingManager : MainRefs
     {
         var b = dontSave;
         dontSave = false;
+        ES3.Save("sceneIndex", sceneIndex);
         if (!savingDataPairs.Any()) AddSavingDatasToList();
 
         foreach (var item in savingDataPairs.Values)
