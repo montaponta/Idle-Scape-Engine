@@ -39,7 +39,6 @@ public class ResourceCollectorAbility : AbstractUnitAbility, IObjectObservable
 
     public virtual void TakeResource()
     {
-        if (!resourceProducer || resourceProducer.getResourceCoroutine != null) return;
         var type = unit.GetRef<CollectAndCraftFunctions>().CheckResourceProducerNeedConditions(resourceProducer.GetSOData()).needType;
         var count = type != ResourceType.none ? unit.GetRef<CollectAndCraftFunctions>().GetCraftItem(type).GetComponent<IToolItem>().HowMuchToolCanTake() : requiredItemCount.count;
         count = Mathf.Clamp(count, 0, requiredItemCount.count);
@@ -69,6 +68,17 @@ public class ResourceCollectorAbility : AbstractUnitAbility, IObjectObservable
             {
                 isCollectingAnimFinished = false;
                 OnResourceProducerEmpty();
+            }, () => isCollectingAnimFinished));
+        }
+        else if (requiredItemCount.count > 0)
+        {
+            if (resourceProducer.animationType == CollectAnimationType.none)
+                isCollectingAnimFinished = true;
+
+            unit.StartCoroutine(unit.GetRef<Main>().ActionCoroutine(() =>
+            {
+                isCollectingAnimFinished = false;
+                TakeResource();
             }, () => isCollectingAnimFinished));
         }
         else isCollectingAnimFinished = false;
