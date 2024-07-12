@@ -12,8 +12,9 @@ public class ResourceCollectorAbility : AbstractUnitAbility, IObjectObservable
     public AbstractCraftItem craftItem;
     public Transform collectTaskItem;
     public (AbstractStorage storage, ResourceType resourceType, float count) reservedCollectables;
-    private bool isCollectingAnimFinished;
+    private int animPhaseValue = -1;
     public Action<object[]> OnObjectObservableChanged;
+    private Coroutine waitAnimPhaseValueCoroutine;
 
     public ResourceCollectorAbility(AbstractUnit unit) : base(unit)
     {
@@ -34,7 +35,7 @@ public class ResourceCollectorAbility : AbstractUnitAbility, IObjectObservable
     public override void SetAnimationPhase(int value)
     {
         if (value == 0) TakeResource();
-        if (value == 1) isCollectingAnimFinished = true;
+        if (value > 0) animPhaseValue = value;
     }
 
     public virtual void TakeResource()
@@ -62,31 +63,44 @@ public class ResourceCollectorAbility : AbstractUnitAbility, IObjectObservable
         if (requiredItemCount.count == 0 || remainCount == 0)
         {
             if (resourceProducer.animationType == CollectAnimationType.none)
-                isCollectingAnimFinished = true;
+                animPhaseValue = 1;
 
             unit.StartCoroutine(unit.GetRef<Main>().ActionCoroutine(() =>
             {
-                isCollectingAnimFinished = false;
+                animPhaseValue = -1;
+                ResetWaitAnimPhaseCoroutine();
                 OnResourceProducerEmpty();
-            }, () => isCollectingAnimFinished));
+            }, () => animPhaseValue > 0));
         }
         else if (requiredItemCount.count > 0)
         {
             if (resourceProducer.animationType == CollectAnimationType.none)
-                isCollectingAnimFinished = true;
-
-            unit.StartCoroutine(unit.GetRef<Main>().ActionCoroutine(() =>
             {
-                isCollectingAnimFinished = false;
+                animPhaseValue = -1;
                 TakeResource();
-            }, () => isCollectingAnimFinished));
+            }
+            else
+            {
+                waitAnimPhaseValueCoroutine = unit.StartCoroutine(unit.GetRef<Main>().ActionCoroutine(() =>
+                 {
+                     animPhaseValue = -1;
+                     waitAnimPhaseValueCoroutine = null;
+                     unit.PlayAnimation(resourceProducer.animationType.ToString(), true);
+                 }, () => animPhaseValue == 1));
+            }
         }
-        else isCollectingAnimFinished = false;
+        else animPhaseValue = -1;
 
         object[] arr = new object[2];
         arr[0] = new CollectablesItemCount { resourceType = backpackResource.resourceType, count = backpackResource.count };
         arr[1] = this;
         OnObjectObservableChanged?.Invoke(arr);
+    }
+
+    private void ResetWaitAnimPhaseCoroutine()
+    {
+        unit.StopCoroutine(waitAnimPhaseValueCoroutine);
+        waitAnimPhaseValueCoroutine = null;
     }
 
     public virtual void OnResourceProducerEmpty()
