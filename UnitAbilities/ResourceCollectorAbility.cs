@@ -99,7 +99,8 @@ public class ResourceCollectorAbility : AbstractUnitAbility, IObjectObservable
 
     private void ResetWaitAnimPhaseCoroutine()
     {
-        unit.StopCoroutine(waitAnimPhaseValueCoroutine);
+        if (waitAnimPhaseValueCoroutine != null)
+            unit.StopCoroutine(waitAnimPhaseValueCoroutine);
         waitAnimPhaseValueCoroutine = null;
     }
 
