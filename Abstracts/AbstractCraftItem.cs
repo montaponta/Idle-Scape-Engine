@@ -14,12 +14,11 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
     public Action<ResourceType, float> OnResourceCountChanged, OnReceiveResource;
     protected Dictionary<ResourceType, float> inProcessCollectingResourcePair = new Dictionary<ResourceType, float>();
     [HideInInspector] public bool isInImproveProgress;
-    public Action<AbstractCraftItem> OnCraftItemClick;
+    public Action<AbstractCraftItem> OnCraftItemChosenForAssembly;
     [HideInInspector] public Timer craftTimer = new Timer(TimerMode.counterFixedUpdate, false);
     private GameObject ghostItem;
     public UnsubscribingDelegate OnAssemblingCompleteUnsubscribe = new UnsubscribingDelegate();
     public Action<object[]> OnObjectObservableChanged;
-    private ProgressBarUI bar;
 
     protected override void Start()
     {
@@ -34,7 +33,6 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
     protected virtual void FixedUpdate()
     {
         craftTimer.TimerUpdate();
-        if (bar) bar.SetValue(craftTimer.GetTimeNormalized());
     }
 
     protected void ImproveLevel()
@@ -61,12 +59,12 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
         return false;
     }
 
-    public bool IsIStorageItem()
+    public virtual bool IsIStorageItem()
     {
         return this is IToolItem;
     }
 
-    public void CreateGhost(GameObject prefab)
+    public virtual void CreateGhost(GameObject prefab)
     {
         if (!prefab || level > 0) return;
         ghostItem = Instantiate(prefab);
@@ -100,28 +98,26 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
         OnResourceCountChanged?.Invoke(resource.resourceType, resource.count);
     }
 
-    public void StartAssembling(float time, int count)
+    public virtual void StartAssembling(float time, int count)
     {
         isInImproveProgress = true;
         craftTimer.StartTimer(time, count);
         OnAssemblingStartProcedure();
         OnAssemblingStart?.Invoke();
         OnAssemblingStartSendItem?.Invoke(this);
-        GetRef<AbstractUI>().DestroyAllIcons(transform);
-        bar = GetRef<AbstractUI>().CreateIcon<ProgressBarUI>(PrefabType.progressBarPrefab, transform);
     }
 
-    public void ChangeAssemblingTime(float time)
+    public virtual void ChangeAssemblingTime(float time)
     {
         craftTimer.StartTimer(time);
     }
 
-    public void IncreaseAssemblingCount()
+    public virtual void IncreaseAssemblingCount()
     {
         craftTimer.count++;
     }
 
-    private void AssemblingComplete()
+    protected virtual void AssemblingComplete()
     {
         ImproveLevel();
         isInImproveProgress = false;
@@ -130,7 +126,6 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
         OnAssemblingComplete?.Invoke();
         OnAssemblingCompleteSendItem?.Invoke(this);
         OnAssemblingCompleteUnsubscribe.Invoke();
-        GetRef<AbstractUI>().DestroyIcon(transform, bar.gameObject);
     }
 
     protected virtual void OnAssemblingStartProcedure() { }
@@ -143,7 +138,7 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
         OnResourceCountChanged?.Invoke(v, 0);
     }
 
-    private void ClearInventoryRequaredResources()
+    protected virtual void ClearInventoryRequaredResources()
     {
         var prices = GetCraftPrices(level, SOData.GetIPricesFromNeedInventoryResourceList(), true);
         var isd = GetRef<AbstractSavingManager>().GetSavingData<InventorySavingData>();
@@ -162,7 +157,7 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
         OnObjectObservableChanged?.Invoke(arr);
     }
 
-    public float GetInProcessCollectingResourceCount(ResourceType resourceType)
+    public virtual float GetInProcessCollectingResourceCount(ResourceType resourceType)
     {
         if (inProcessCollectingResourcePair.ContainsKey(resourceType))
         {
@@ -172,7 +167,7 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
         return 0;
     }
 
-    public void AddInProcessCollectingResourceCount(ResourceType resourceType, float count)
+    public virtual void AddInProcessCollectingResourceCount(ResourceType resourceType, float count)
     {
         if (inProcessCollectingResourcePair.ContainsKey(resourceType))
         {
@@ -198,9 +193,9 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
         return v.count;
     }
 
-    public virtual void OnItemClick()
+    public virtual void OnItemChosenForAssembly()
     {
-        OnCraftItemClick?.Invoke(this);
+        OnCraftItemChosenForAssembly?.Invoke(this);
     }
 
     public virtual void CollectorReachedItem(AbstractUnit unit) { }
@@ -226,7 +221,7 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
         collectedList = list;
     }
 
-    public int GetLevelsCount()
+    public virtual int GetLevelsCount()
     {
         int lvl = 0;
 
@@ -240,7 +235,7 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
         return lvl;
     }
 
-    public Transform GetCurrentLevelTransform()
+    public virtual Transform GetCurrentLevelTransform()
     {
         foreach (Transform item in transform)
         {

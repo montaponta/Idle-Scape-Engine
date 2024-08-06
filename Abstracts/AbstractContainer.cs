@@ -16,11 +16,10 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
     [SerializeField] private List<AbstractContainer> parentContainersList;
     public string id;
     protected bool isHacked, isInHackProcess;
-    private Timer unlockTimer = new Timer(TimerMode.counterFixedUpdate);
+    protected Timer unlockTimer = new Timer(TimerMode.counterFixedUpdate);
     [HideInInspector] public AbstractResourceProducer resourceProducer;
     public UnsubscribingDelegate OnContainerOpenedAction = new UnsubscribingDelegate();
     public List<AbstractContainer> alsoOpenContainersList;
-    private ProgressBarUI bar;
     private List<CollectablesItemCount> collectedList = new List<CollectablesItemCount>();
     public Action<object[]> OnObjectObservableChanged;
 
@@ -40,7 +39,6 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
     protected virtual void FixedUpdate()
     {
         unlockTimer.TimerUpdate();
-        if (bar) bar.SetValue(unlockTimer.GetTimeNormalized());
     }
 
     public virtual void StartOpenContainer(AbstractUnit unit)
@@ -48,17 +46,17 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
         if (!unlockTimer.isTimerActive)
         {
             isInHackProcess = true;
-            unlockTimer.OnTimerReached += OnContainerOpened;
-            GetRef<AbstractUI>().DestroyAllIcons(transform);
-            var sharedObjects = GetRef<SharedObjects>();
-            bar = GetRef<AbstractUI>().CreateIcon<ProgressBarUI>(PrefabType.progressBarPrefab, transform);
+            unlockTimer.OnTimerReached += OnContainerOpened;       
             var time = (float)SOData.GetValueByTag("OpenTime", typeof(float));
             unlockTimer.StartTimer(time);
+            OnStartOpenContainerProcedure();
         }
         else unlockTimer.count++;
 
         GetRef<ClickablesContainersHandler>().StartOpenContainer(this, unit);
     }
+
+    public virtual void OnStartOpenContainerProcedure() { }
 
     public virtual void StopOpeningContainer()
     {
@@ -78,7 +76,6 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
         OnContainerOpenedProcedure();
         GetRef<ClickablesContainersHandler>().OnContainerOpened(this);
         ShowHidePreview(false);
-        GetRef<AbstractUI>().DestroyIcon(transform, bar.gameObject);
         GetRef<AbstractSavingManager>().GetSavingData<ContainerSavingData>().SaveContainerState(this);
 
         foreach (var item in alsoOpenContainersList)

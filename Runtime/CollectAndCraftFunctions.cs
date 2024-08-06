@@ -160,7 +160,7 @@ public class CollectAndCraftFunctions : MainRefs
         craftItem.isInImproveProgress = true;
         craftDatas.Add(craftItem, craftData);
         craftItem.OnAssemblingCompleteUnsubscribe.AddListener(() => craftDatas.Remove(craftItem), true);
-        craftItem.OnItemClick();
+        craftItem.OnItemChosenForAssembly();
 
     }
 
