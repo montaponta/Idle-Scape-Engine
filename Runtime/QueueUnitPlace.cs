@@ -61,4 +61,6 @@ public class QueueUnitPlace : MainRefs
     {
         return unitsList.FindIndex(a => a == unit);
     }
+
+    public virtual bool IsEnable() { return queueLength > 0; }
 }
