@@ -119,8 +119,7 @@ public class Main : MainRefs
 
     public int GetSceneIndex()
     {
-        var sceneLoader = FindObjectOfType<SceneLoader>();
-        return sceneLoader ? sceneLoader.scenesList.FindIndex(a => a == GetSceneName()) : 0;
+        return ES3.Load("sceneIndex", 0);
     }
 
     public string GetSceneName()
