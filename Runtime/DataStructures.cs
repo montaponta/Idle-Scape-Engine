@@ -77,6 +77,30 @@ public class ProduceResource : ICloneable
 		produceResource.additionalParametersList = new List<AdditionalParameters>(additionalParametersList);
 		return produceResource;
 	}
+
+    public object GetValueByTag(string tag, System.Type returnType)
+    {
+        var v = additionalParametersList.Find(a => a.paramName == tag);
+
+        if (v != null)
+        {
+            if (returnType == typeof(float))
+            {
+                System.Globalization.CultureInfo cultureInfo = new System.Globalization.CultureInfo("en-US");
+                return float.Parse(v.value, cultureInfo);
+            }
+
+            if (returnType == typeof(string)) return v.value;
+        }
+
+        return null;
+    }
+
+    public T GetValueByTag<T>(string tag)
+    {
+        var v = (T)GetValueByTag(tag, typeof(T));
+        return v != null ? v : default(T);
+    }
 }
 
 [Serializable]
