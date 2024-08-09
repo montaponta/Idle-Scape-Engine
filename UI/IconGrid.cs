@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public class IconGrid
 {
@@ -56,6 +58,7 @@ public class IconGrid
     public void DestroyIcon(Transform target, GameObject iconGO)
     {
         if (iconGO == null) return;
+        if (!iconPairs.ContainsKey(target)) return;
 
         foreach (Transform item in iconPairs[target])
         {
@@ -64,9 +67,10 @@ public class IconGrid
                 Object.Destroy(item.gameObject);
                 break;
             }
-
-            if (item.childCount == 0) DestroyAllIcons(target);
         }
+
+        Action action = () => { if (iconPairs[target].childCount == 0) DestroyAllIcons(target); };
+        ui.GetRef<Main>().Invoke(action, 0.1f);
     }
 
     public void DestroyAllIcons(Transform target)
