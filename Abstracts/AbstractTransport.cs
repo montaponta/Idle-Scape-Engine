@@ -37,7 +37,6 @@ public abstract class AbstractTransport : QueueUnitPlace, IIDExtention
 
     public virtual void OnTransportExit(AbstractUnit unit, bool isExitAllUnits = false)
     {
-        unit.transform.localScale = Vector3.one;
         unit.transform.SetParent(unitsFolder);
         unit.agent.enabled = true;
         var pos = main.GetAgentCirclePosition(unit.transform, 3, unit.transform, 5);
