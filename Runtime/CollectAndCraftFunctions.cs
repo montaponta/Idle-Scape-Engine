@@ -60,7 +60,8 @@ public class CollectAndCraftFunctions : MainRefs
             if (craftItem.level >= item.forCraftLevel) continue;
             var needCraftItem = GetCraftItem(item.needResource);
             if (needCraftItem == null) continue;
-            if (needCraftItem.level < item.needResourceLevel)
+            if (craftItem.level + 1 == item.forCraftLevel
+                && needCraftItem.level < item.needResourceLevel)
                 list.Add((item.needResource, item.needResourceLevel, false, NeedConditionType.craftItem));
         }
 
