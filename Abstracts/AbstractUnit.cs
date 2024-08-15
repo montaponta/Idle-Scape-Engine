@@ -188,6 +188,7 @@ public abstract class AbstractUnit : MainRefs, IIDExtention
         if (!agent.enabled) yield break;
         agent.isStopped = false;
         agent.SetDestination(pos);
+        yield return new WaitForSeconds(0.1f);
         yield return new WaitUntil(() => !agent.pathPending);
         yield return new WaitUntil(() => !agent.enabled || agent.remainingDistance <= agent.stoppingDistance + 0.1f);
         if (agent.enabled)
@@ -203,6 +204,7 @@ public abstract class AbstractUnit : MainRefs, IIDExtention
         if (!agent.enabled) yield break;
         agent.isStopped = false;
         agent.SetDestination(target.position);
+        yield return new WaitForSeconds(0.1f);
         yield return new WaitUntil(() => !agent.pathPending);
         yield return new WaitUntil(() => !agent.enabled || agent.remainingDistance <= agent.stoppingDistance + 0.1f);
         if (agent.enabled)
