@@ -251,7 +251,6 @@ public class QuestWindow : EditorWindow, IGeneralFunctionalWindow
         Event e = Event.current;
         var mousePosY = e.mousePosition.y;
         if (rect.y > mousePosY + 500 || rect.y < mousePosY - 500) return true;
-        //if (isOptimize && rect.height > 0) return true;
         return false;
     }
 

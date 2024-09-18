@@ -1,142 +1,193 @@
-using System.Collections;
+using NUnit.Framework;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEditor;
 using System.Linq;
+using UnityEditor;
+using UnityEngine;
 
 public class ViewTreeQuests : EditorWindow, IGeneralFunctionalWindow
 {
-	GUILayoutOption horizontalOption = GUILayout.ExpandWidth(true);
-	GUILayoutOption verticalOption = GUILayout.ExpandHeight(true);
-	private Quests targetObject;
-	private int index;
-	private Vector2 scrollPos;
-	private List<QuestData> questDatasTree = new List<QuestData>();
+    GUILayoutOption horizontalOption = GUILayout.ExpandWidth(true);
+    GUILayoutOption verticalOption = GUILayout.ExpandHeight(true);
+    private Quests targetObject;
+    private int index, questDatasTreeIndex;
+    private Vector2 scrollPos;
+    private List<List<QuestData>> questDatasTree = new();
+    private string[] branchNamesArr;
+    private string branchTag;
 
-	public void SetTargetObject(Quests quests)
-	{
-		targetObject = quests;
-	}
+    public void SetTargetObject(Quests quests)
+    {
+        targetObject = quests;
+    }
 
-	public void SetParameters(AbstractQuestBlockPart blockPart, object obj)
-	{
-		index = targetObject.questDatasList.FindIndex(a => a.id == blockPart.id);
-		string launchTag = blockPart.tag;
+    public void SetParameters(AbstractQuestBlockPart blockPart, object obj)
+    {
+        index = targetObject.questDatasList.FindIndex(a => a.id == blockPart.id);
+        string launchTag = obj != null ? (string)obj : blockPart.tag;
+        List<QuestData> list = new();
+        if (!questDatasTree.Any()) questDatasTree.Add(list);
+        FindFlowDown(launchTag, list);
+        questDatasTree.ForEach(a => FindFlowUp(launchTag, a));
+        branchNamesArr = new string[questDatasTree.Count];
 
-		foreach (var item in targetObject.questDatasList)
-		{
-			foreach (var item1 in targetObject.questDatasList)
-			{
-				if (item1.blockPart.startQuestsWithTagsList.Find(a => a == launchTag) != null)
-				{
-					questDatasTree.Insert(0, item1);
-					launchTag = item1.blockPart.tag;
-					break;
-				}
-			}
-		}
+        for (int i = 0; i < questDatasTree.Count; i++)
+        {
+            branchNamesArr[i] = $"branch_{i}";
+        }
+    }
 
-		questDatasTree.Add(targetObject.questDatasList[index]);
-		if (obj == null) return;
-		launchTag = (string)obj;
+    private void FindFlowDown(string launchTag, List<QuestData> branchQuestDatasList)
+    {
+        foreach (var item in targetObject.questDatasList)
+        {
+            var v = item.blockPart.header;
 
-		foreach (var item in targetObject.questDatasList)
-		{
-			foreach (var item1 in targetObject.questDatasList)
-			{
-				if (item1.blockPart.tag == launchTag)
-				{
-					questDatasTree.Add(item1);
-					if (item1.blockPart.startQuestsWithTagsList.Any())
-					{
-						launchTag = item1.blockPart.startQuestsWithTagsList[0];
-						break;
-					}
-					else return;
-				}
-			}
-		}
-	}
+            if (item.blockPart.tag == launchTag
+                && !branchQuestDatasList.Contains(item))
+            {
+                branchQuestDatasList.Add(item);
+                List<QuestData> newBranchList = new(branchQuestDatasList);
+                FindFlowDownNextStepTag(item.blockPart.startQuestsWithTagsList, branchQuestDatasList, newBranchList);
+                var dataTags = item.blockPart.GetSetDataTags(null);
 
-	private void OnGUI()
-	{
-		if (targetObject == null)
-		{
-			Close();
-			return;
-		}
+                if (dataTags != null)
+                {
+                    List<QuestData> newBranchListForDataTags = new(branchQuestDatasList);
+                    FindFlowDownNextStepTag(dataTags, branchQuestDatasList, newBranchListForDataTags);
+                }
 
-		GUILayout.Space(20);
-		scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
-		var rect = EditorGUILayout.BeginVertical(verticalOption);
+                break;
+            }
+        }
+    }
 
-		for (int i = 0; i < questDatasTree.Count; i++)
-		{
-			if (targetObject.questWindow == null)
-			{
-				EditorGUILayout.EndVertical();
-				EditorGUILayout.EndScrollView();
-				Close();
-				return;
-			}
+    private void FindFlowDownNextStepTag(List<string> searchingList, List<QuestData> branchQuestDatasList, List<QuestData> newBranchList)
+    {
+        for (int i = 0; i < searchingList.Count; i++)
+        {
+            var nextStepTag = searchingList[i];
 
-			ShowHeader(questDatasTree[i]);
-			ShowBody(questDatasTree[i]);
-			GUILayout.Space(20);
-		}
+            if (i == 0) FindFlowDown(nextStepTag, branchQuestDatasList);
+            else if (!branchQuestDatasList.Exists(a => a.blockPart.tag == nextStepTag))
+            {
+                questDatasTree.Add(newBranchList);
+                FindFlowDown(nextStepTag, newBranchList);
+            }
+        }
+    }
 
-		EditorGUILayout.EndVertical();
-		EditorGUILayout.EndScrollView();
-	}
-	private void ShowHeader(QuestData questData)
-	{
-		var blockPart = questData.blockPart;
-		var name = blockPart.header != "" ? new GUIContent { text = blockPart.header } : questData.questBlock.GetName();
-		var stepDataIndex = targetObject.questDatasList.FindIndex(a => a.blockPart == blockPart);
-		var rect = EditorGUILayout.BeginHorizontal(horizontalOption);
+    private void FindFlowUp(string launchTag, List<QuestData> branchQuestDatasList)
+    {
+        foreach (var item in targetObject.questDatasList)
+        {
+            var v = item.blockPart.header;
+            var tagExist = item.blockPart.startQuestsWithTagsList.Exists(a => a == launchTag);
+            if (tagExist) FindFlowUpNextStepTag(launchTag, item, branchQuestDatasList);
+            var tagExistInDataTags = item.blockPart.GetSetDataTags(null).Exists(a => a == launchTag);
+            if (tagExistInDataTags)
+            {
+                FindFlowUpNextStepTag(launchTag, item, branchQuestDatasList);
+            }
+        }
+    }
 
-		if (targetObject.questDatasList[index].blockPart == blockPart)
-		{
-			EditorGUI.DrawRect(new Rect(0, rect.y, rect.width, rect.height), new Color(1, 1, 0, 0.3f));
-		}
+    private void FindFlowUpNextStepTag(string launchTag, QuestData questData, List<QuestData> branchQuestDatasList)
+    {
+        if (!branchQuestDatasList.Contains(questData))
+        {
+            branchQuestDatasList.Insert(0, questData);
+            FindFlowUp(launchTag, branchQuestDatasList);
+        }
+    }
 
-		GUILayout.Label(stepDataIndex.ToString(), EditorStyles.largeLabel);
-		GUILayout.Label(name, EditorStyles.largeLabel);
-		EditorGUILayout.EndHorizontal();
+    private void OnGUI()
+    {
+        if (targetObject == null)
+        {
+            Close();
+            return;
+        }
 
-	}
+        GUILayout.Space(20);
+        scrollPos = EditorGUILayout.BeginScrollView(scrollPos);
 
-	private void ShowBody(QuestData questData)
-	{
-		EditorGUILayout.BeginVertical(GUILayout.Height(5));
-		var i = questData.questBlock.GetDataList().FindIndex(a => a.id == questData.id);
-		questData.questBlock.GetDataListGUI(i, this);
-		EditorGUILayout.EndVertical();
-	}
+        EditorGUILayout.BeginHorizontal();
+        var branchStr = questDatasTree.Count == 1 ? "branch" : "branches";
+        EditorGUILayout.LabelField($"Select branch: ({questDatasTree.Count} {branchStr})");
+        questDatasTreeIndex = EditorGUILayout.Popup(questDatasTreeIndex, branchNamesArr/*, GUILayout.Width(250)*/);
+        EditorGUILayout.EndHorizontal();
 
-	public IGeneralFunctionalWindow OpenWindow(string windowName)
-	{
-		return null;
-	}
+        var currentBranch = questDatasTree[questDatasTreeIndex];
+        var rect = EditorGUILayout.BeginVertical(verticalOption);
 
-	public bool CanShowElement(string elementName)
-	{
-		if (elementName == "View Branch") return false;
-		return true;
-	}
+        for (int i = 0; i < currentBranch.Count; i++)
+        {
+            if (targetObject.questWindow == null)
+            {
+                EditorGUILayout.EndVertical();
+                EditorGUILayout.EndScrollView();
+                Close();
+                return;
+            }
 
-	public Quests GetMainScript()
-	{
-		return targetObject;
-	}
+            ShowHeader(currentBranch[i]);
+            ShowBody(currentBranch[i]);
+            GUILayout.Space(20);
+        }
 
-	public List<QuestData> GetQuestDatasList()
-	{
-		return targetObject.questDatasList;
-	}
+        EditorGUILayout.EndVertical();
+        EditorGUILayout.EndScrollView();
+    }
 
-	public int GetIndexByTag(string tag)
-	{
-		return targetObject.GetIndexByTag(tag);
-	}
+    private void ShowHeader(QuestData questData)
+    {
+        var blockPart = questData.blockPart;
+        var name = blockPart.header != "" ? new GUIContent { text = blockPart.header } : questData.questBlock.GetName();
+        var stepDataIndex = targetObject.questDatasList.FindIndex(a => a.blockPart == blockPart);
+        var rect = EditorGUILayout.BeginHorizontal(horizontalOption);
+
+        if (targetObject.questDatasList[index].blockPart == blockPart)
+        {
+            EditorGUI.DrawRect(new Rect(0, rect.y, rect.width, rect.height), new Color(1, 1, 0, 0.3f));
+        }
+
+        GUILayout.Label(stepDataIndex.ToString(), EditorStyles.largeLabel);
+        GUILayout.Label(name, EditorStyles.largeLabel);
+        EditorGUILayout.EndHorizontal();
+
+    }
+
+    private void ShowBody(QuestData questData)
+    {
+        EditorGUILayout.BeginVertical(GUILayout.Height(5));
+        var i = questData.questBlock.GetDataList().FindIndex(a => a.id == questData.id);
+        questData.questBlock.GetDataListGUI(i, this);
+        EditorGUILayout.EndVertical();
+    }
+
+    public IGeneralFunctionalWindow OpenWindow(string windowName)
+    {
+        return null;
+    }
+
+    public bool CanShowElement(string elementName)
+    {
+        if (elementName == "View Branch") return false;
+        return true;
+    }
+
+    public Quests GetMainScript()
+    {
+        return targetObject;
+    }
+
+    public List<QuestData> GetQuestDatasList()
+    {
+        return targetObject.questDatasList;
+    }
+
+    public int GetIndexByTag(string tag)
+    {
+        return targetObject.GetIndexByTag(tag);
+    }
 }
