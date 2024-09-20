@@ -1,4 +1,5 @@
-using NUnit.Framework;
+using NUnit.Framework.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
@@ -14,6 +15,7 @@ public class ViewTreeQuests : EditorWindow, IGeneralFunctionalWindow
     private List<List<QuestData>> questDatasTree = new();
     private string[] branchNamesArr;
     private string branchTag;
+    private Queue<Action> actionsQueue = new();
 
     public void SetTargetObject(Quests quests)
     {
@@ -27,7 +29,9 @@ public class ViewTreeQuests : EditorWindow, IGeneralFunctionalWindow
         List<QuestData> list = new();
         if (!questDatasTree.Any()) questDatasTree.Add(list);
         FindFlowDown(launchTag, list);
+        if (actionsQueue.Any()) StartQueueAction();
         questDatasTree.ForEach(a => FindFlowUp(launchTag, a));
+        if (actionsQueue.Any()) StartQueueAction();
         branchNamesArr = new string[questDatasTree.Count];
 
         for (int i = 0; i < questDatasTree.Count; i++)
@@ -46,22 +50,21 @@ public class ViewTreeQuests : EditorWindow, IGeneralFunctionalWindow
                 && !branchQuestDatasList.Contains(item))
             {
                 branchQuestDatasList.Add(item);
-                List<QuestData> newBranchList = new(branchQuestDatasList);
-                FindFlowDownNextStepTag(item.blockPart.startQuestsWithTagsList, branchQuestDatasList, newBranchList);
+                FindFlowDownNextStepTag(item.blockPart.startQuestsWithTagsList, branchQuestDatasList);
                 var dataTags = item.blockPart.GetSetDataTags(null);
 
                 if (dataTags != null)
                 {
-                    List<QuestData> newBranchListForDataTags = new(branchQuestDatasList);
-                    FindFlowDownNextStepTag(dataTags, branchQuestDatasList, newBranchListForDataTags);
+                    FindFlowDownNextStepTag(dataTags, branchQuestDatasList);
                 }
 
                 break;
             }
+            //else LogLoop(launchTag, item.blockPart.tag);
         }
     }
 
-    private void FindFlowDownNextStepTag(List<string> searchingList, List<QuestData> branchQuestDatasList, List<QuestData> newBranchList)
+    private void FindFlowDownNextStepTag(List<string> searchingList, List<QuestData> branchQuestDatasList)
     {
         for (int i = 0; i < searchingList.Count; i++)
         {
@@ -70,9 +73,16 @@ public class ViewTreeQuests : EditorWindow, IGeneralFunctionalWindow
             if (i == 0) FindFlowDown(nextStepTag, branchQuestDatasList);
             else if (!branchQuestDatasList.Exists(a => a.blockPart.tag == nextStepTag))
             {
-                questDatasTree.Add(newBranchList);
-                FindFlowDown(nextStepTag, newBranchList);
+                actionsQueue.Enqueue(() =>
+                {
+                    List<QuestData> newBranchList = new(branchQuestDatasList);
+                    newBranchList.Remove(newBranchList[^1]);
+                    questDatasTree.Add(newBranchList);
+                    FindFlowDown(nextStepTag, newBranchList);
+                    if (actionsQueue.Any()) StartQueueAction();
+                });
             }
+            //else LogLoop(nextStepTag, questData.blockPart.tag);
         }
     }
 
@@ -84,9 +94,18 @@ public class ViewTreeQuests : EditorWindow, IGeneralFunctionalWindow
             var tagExist = item.blockPart.startQuestsWithTagsList.Exists(a => a == launchTag);
             if (tagExist) FindFlowUpNextStepTag(launchTag, item, branchQuestDatasList);
             var tagExistInDataTags = item.blockPart.GetSetDataTags(null).Exists(a => a == launchTag);
+
             if (tagExistInDataTags)
             {
-                FindFlowUpNextStepTag(launchTag, item, branchQuestDatasList);
+                actionsQueue.Enqueue(() =>
+                {
+                    List<QuestData> newBranchList = new(branchQuestDatasList);
+                    newBranchList.Remove(newBranchList[^2]);
+                    questDatasTree.Add(newBranchList);
+                    FindFlowUpNextStepTag(launchTag, item, newBranchList);
+                    if (actionsQueue.Any()) StartQueueAction();
+                });
+
             }
         }
     }
@@ -96,8 +115,19 @@ public class ViewTreeQuests : EditorWindow, IGeneralFunctionalWindow
         if (!branchQuestDatasList.Contains(questData))
         {
             branchQuestDatasList.Insert(0, questData);
-            FindFlowUp(launchTag, branchQuestDatasList);
+            FindFlowUp(questData.blockPart.tag, branchQuestDatasList);
         }
+        else LogLoop(launchTag, questData.blockPart.tag);
+    }
+
+    private void StartQueueAction()
+    {
+        actionsQueue.Dequeue().Invoke();
+    }
+
+    private void LogLoop(string launchTag, string targetTag)
+    {
+        Debug.Log($"{launchTag} loop on {targetTag}");
     }
 
     private void OnGUI()
