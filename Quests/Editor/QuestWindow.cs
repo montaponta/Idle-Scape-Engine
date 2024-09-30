@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class QuestWindow : EditorWindow, IGeneralFunctionalWindow
 {
-    GUILayoutOption horizontalOption = GUILayout.ExpandWidth(true);
-    GUILayoutOption verticalOption = GUILayout.ExpandHeight(true);
-    Quests targetObject;
+    private GUILayoutOption horizontalOption = GUILayout.ExpandWidth(true);
+    private GUILayoutOption verticalOption = GUILayout.ExpandHeight(true);
+    private Quests targetObject;
     private string searchText = "";
-    private Rect clickedRectSearch, rewindToRectSearch;
+    public Rect clickedRectSearch, rewindToRectSearch;
     private int delayFrameCounter, delayCounter = -1;
     private int chainInsertIndex;
     private int questIndexChoosenForInsert;
@@ -108,7 +108,14 @@ public class QuestWindow : EditorWindow, IGeneralFunctionalWindow
         if (!CheckOptimizationConditions(rect))
         {
             var content = new GUIContent { text = index.ToString(), tooltip = $"{data.questBlock.name} {data.questBlock.GetName().tooltip}" };
-            GUILayout.Label(content, EditorStyles.largeLabel);
+
+            if (GUILayout.Button(content, EditorStyles.largeLabel, GUILayout.ExpandWidth(false)))
+            {
+                var linksPopup = new TagLinksPopupWindow(this, data);
+                var popupRect = new Rect(Event.current.mousePosition, Vector2.one);
+                PopupWindow.Show(popupRect, linksPopup);
+            }
+
             var str = "";
             if (data.blockPart.header == str) str = GUILayout.TextField(data.questBlock.GetName().text);
             else str = GUILayout.TextField(data.blockPart.header);
@@ -610,4 +617,6 @@ public class QuestWindow : EditorWindow, IGeneralFunctionalWindow
             PopupWindow.Show(popupRect, popup);
         }
     }
+
+    
 }
