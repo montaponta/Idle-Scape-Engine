@@ -93,7 +93,7 @@ public class CollectAndCraftFunctions : MainRefs
 
     public AbstractCraftItem GetCraftItem(ResourceType type)
     {
-        var craftItem = craftItemsList.Where(a => a.SOData.craftItem == type).FirstOrDefault();
+        var craftItem = craftItemsList.Find(a => a.SOData.craftItem == type);
         return craftItem;
     }
 
@@ -178,7 +178,7 @@ public class CollectAndCraftFunctions : MainRefs
     {
         if (craftDatas.Any())
         {
-            var data = craftDatas.Values.Where(a => a.unitsList.Count < a.craftItem.SOData.unitsCount).FirstOrDefault();
+            var data = craftDatas.Values.FirstOrDefault(a => a.unitsList.Count < a.craftItem.SOData.unitsCount);
             if (data == null) return null;
             return data.craftItem;
         }
@@ -188,8 +188,8 @@ public class CollectAndCraftFunctions : MainRefs
     public CollectablesItemCount WhatResourceToCollectForCraft(AbstractCraftItem craftItem, ResourceCollectorAbility resourceCollectorAbility, bool isTakeTask)
     {
         CollectablesItemCount collectables = new CollectablesItemCount();
-        if (!craftDatas.ContainsKey(craftItem)) return collectables;
-        var data = craftDatas[craftItem];
+        CraftData data = null;
+        if (!craftDatas.TryGetValue(craftItem, out data)) return collectables;
         if (!data.collectables.Any()) return collectables;
         collectables.resourceType = data.collectables[0].resourceType;
         var canTake = resourceCollectorAbility.GetBackpackFreeSpace(data.collectables[0].resourceType);
@@ -262,8 +262,8 @@ public class CollectAndCraftFunctions : MainRefs
     public CollectablesItemCount WhatResourceToCollect(Transform target, ResourceCollectorAbility resourceCollectorAbility, bool isTakeTask)
     {
         CollectablesItemCount collectables = new CollectablesItemCount();
-        if (!collectDatas.ContainsKey(target)) return collectables;
-        var data = collectDatas[target];
+        CollectData data = null;
+        if (!collectDatas.TryGetValue(target, out data)) return collectables;
         if (!data.collectables.Any()) return collectables;
         collectables.resourceType = data.collectables[0].resourceType;
         var canTake = resourceCollectorAbility.GetBackpackFreeSpace(data.collectables[0].resourceType);
