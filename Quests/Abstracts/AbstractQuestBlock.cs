@@ -70,11 +70,6 @@ public abstract class AbstractQuestBlock : MainRefs
 			}
 
 			blockPart.startQuestsWithTagsList[i] = EditorGUILayout.TextField(new GUIContent { text = label, tooltip = $"{window.GetIndexByTag(blockPart.startQuestsWithTagsList[i])} {label} " }, blockPart.startQuestsWithTagsList[i]);
-			if (window.CanShowElement("View Branch") && GUILayout.Button("View Branch", GUILayout.Width(85)))
-			{
-				var openedWindow = window.OpenWindow("ViewTreeQuests");
-				if (openedWindow != null) openedWindow.SetParameters(blockPart, blockPart.startQuestsWithTagsList[i]);
-			}
 			if (GUILayout.Button("+", GUILayout.Width(20))) blockPart.startQuestsWithTagsList.Add("");
 			if (GUILayout.Button("-", GUILayout.Width(20)))
 			{
@@ -93,13 +88,6 @@ public abstract class AbstractQuestBlock : MainRefs
 			EditorGUILayout.BeginHorizontal();
 			GUILayout.Box(icon, options);
 			EditorGUILayout.LabelField("Add tag for start new quest");
-
-			if (window.CanShowElement("View Branch") && GUILayout.Button("View Branch", GUILayout.Width(85)))
-			{
-				var openedWindow = window.OpenWindow("ViewTreeQuests");
-				if (openedWindow != null) openedWindow.SetParameters(blockPart, null);
-			}
-
 			if (GUILayout.Button("+", GUILayout.Width(20))) blockPart.startQuestsWithTagsList.Add("");
 			EditorGUILayout.EndHorizontal();
 		}

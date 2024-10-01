@@ -85,13 +85,6 @@ public class ViewListQuests : EditorWindow, IGeneralFunctionalWindow
 
 	public IGeneralFunctionalWindow OpenWindow(string windowName)
 	{
-		if (windowName == "ViewTreeQuests")
-		{
-			ViewTreeQuests window = (ViewTreeQuests)EditorWindow.GetWindow(typeof(ViewTreeQuests));
-			window.Show();
-			window.SetTargetObject(targetObject);
-			return window;
-		};
 		return null;
 	}
 
