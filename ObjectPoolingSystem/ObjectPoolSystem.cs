@@ -8,7 +8,7 @@ public class ObjectPoolSystem : MainRefs
     
     public static ObjectPoolSystem shared;
     
-    private Dictionary<string, ObjectPool<Component>> pool = new();
+    private Dictionary<string, ObjectPool<GameObject>> pool = new();
     
     private void Awake()
     {
@@ -27,7 +27,7 @@ public class ObjectPoolSystem : MainRefs
         if (pool[gameObjectType].CountInactive >= count)
             return;
         
-        var reserve = new Component[count - pool[gameObjectType].CountInactive];
+        var reserve = new GameObject[count - pool[gameObjectType].CountInactive];
         
         for (int i = 0; i < count; i++)
             reserve[i] = pool[gameObjectType].Get();
@@ -36,7 +36,7 @@ public class ObjectPoolSystem : MainRefs
             pool[gameObjectType].Release(reserve[i]);
     }
 
-    public Component GetPoolableObject(string gameObjectType)
+    public GameObject GetPoolableObject(string gameObjectType)
     {
         CheckPool(gameObjectType);
         
@@ -47,14 +47,14 @@ public class ObjectPoolSystem : MainRefs
     {
         CheckPool(gameObjectType);
         
-        return (T)pool[gameObjectType].Get();
+        return pool[gameObjectType].Get().GetComponent<T>();
     }
     
-    public void GetPoolableObjects(string gameObjectType, int count, out Component[] gameObjects)
+    public void GetPoolableObjects(string gameObjectType, int count, out GameObject[] gameObjects)
     {
         CheckPool(gameObjectType);
         
-        gameObjects = new Component[count];
+        gameObjects = new GameObject[count];
         for (var index = 0; index < gameObjects.Length; index++)
             gameObjects[index] = pool[gameObjectType].Get();
     }
@@ -65,10 +65,10 @@ public class ObjectPoolSystem : MainRefs
         
         gameObjects = new T[count];
         for (var index = 0; index < gameObjects.Length; index++)
-            gameObjects[index] = (T)pool[gameObjectType].Get();
+            gameObjects[index] = pool[gameObjectType].Get().GetComponent<T>();
     }
     
-    public void ReleasePoolableObject(string gameObjectType, Component obj)
+    public void ReleasePoolableObject(string gameObjectType, GameObject obj)
     {
         if (pool.ContainsKey(gameObjectType))
             pool[gameObjectType].Release(obj);
@@ -76,7 +76,7 @@ public class ObjectPoolSystem : MainRefs
             Debug.Log($"Attempt to release object {gameObjectType} to pool that doesn't exist");
     }
     
-    public void ReleasePoolableObjects(string gameObjectType, IEnumerable<Component> objects)
+    public void ReleasePoolableObjects(string gameObjectType, IEnumerable<GameObject> objects)
     {
         if (pool.ContainsKey(gameObjectType))
         {
@@ -95,7 +95,7 @@ public class ObjectPoolSystem : MainRefs
         pool[gameObjectType].Clear();
         pool.Remove(gameObjectType);
     }
-
+    
     private void CheckPool(string gameObjectType)
     {
         if (!pool.ContainsKey(gameObjectType))
@@ -107,17 +107,26 @@ public class ObjectPoolSystem : MainRefs
         if (pool.ContainsKey(gameObjectType))
             return;
 
-        var prefab = poolableGameObjectProvider.GetPoolableGameObject(gameObjectType);
-        var objectPool = new ObjectPool<Component>(() => CreateGameObject(prefab), actionOnRelease: DisableGameObject, defaultCapacity: count);//TODO: fix
-        pool.Add(gameObjectType, objectPool);
+        var poolObjectInfo = poolableGameObjectProvider.GetPoolableGameObject(gameObjectType);
+        if (string.IsNullOrEmpty(poolObjectInfo.ObjectName))
+            Debug.LogError($"Can't find object {gameObjectType} in poolableGameObjectProvider");
+        else
+        {
+            var objectPool = new ObjectPool<GameObject>(() => CreateGameObject(poolObjectInfo), actionOnRelease: DisableGameObject, defaultCapacity: count);
+            pool.Add(gameObjectType, objectPool);
+        }
     }
 
-    private T CreateGameObject<T>(T prefab) where T : Component
-        => Instantiate(prefab, transform);
-
-    private void DisableGameObject(Component obj)
+    private GameObject CreateGameObject(PoolableGameObjectProvider.PoolObjectInfo poolObjectInfo)
     {
-        obj.gameObject.SetActive(false);
-        obj.transform.SetParent(transform);
+        var newGameObject = Instantiate(poolObjectInfo.GameObject, transform);
+        newGameObject.name = poolObjectInfo.ObjectName;
+        return newGameObject;
+    }
+
+    private void DisableGameObject(GameObject disableGameObject)
+    {
+        disableGameObject.gameObject.SetActive(false);
+        disableGameObject.transform.SetParent(transform);
     }
 }

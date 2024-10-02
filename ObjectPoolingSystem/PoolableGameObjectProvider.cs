@@ -6,13 +6,13 @@ public class PoolableGameObjectProvider : MonoBehaviour
 {
     [SerializeField] private PoolObjectInfo[] poolObjectInfos;
 
-    public Component GetPoolableGameObject(string objectName)
-        => poolObjectInfos.FirstOrDefault(e => e.ObjectName == objectName).Component;
+    public PoolObjectInfo GetPoolableGameObject(string objectName)
+        => poolObjectInfos.FirstOrDefault(e => e.ObjectName == objectName);
     
     [Serializable]
     public struct PoolObjectInfo
     {
         public string ObjectName;
-        public Component Component;
+        public GameObject GameObject;
     }
 }
