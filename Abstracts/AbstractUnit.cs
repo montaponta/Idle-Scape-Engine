@@ -53,9 +53,12 @@ public abstract class AbstractUnit : MainRefs, IIDExtention
 
         if (!isEnable) return;
 
-        foreach (var item in unitActionsList)
+        if (GetRef<Main>().unitActionPermissionHandler.CanIAskPermission(this))
         {
-            if (item.CheckAction()) break;
+            for (int i = 0; i < unitActionsList.Count; i++)
+            {
+                if (unitActionsList[i].CheckAction()) break;
+            }
         }
 
         if (unitAction != null) unitAction.Update();

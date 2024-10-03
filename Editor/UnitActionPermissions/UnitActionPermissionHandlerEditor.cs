@@ -10,6 +10,8 @@ public class UnitActionPermissionHandlerEditor : Editor
     public override void OnInspectorGUI()
     {
         targetObject = (UnitActionPermissionHandler)target;
+        targetObject.unitsPerFrame = EditorGUILayout.IntField("Units Per Frame", targetObject.unitsPerFrame);
+
         for (int i = 0; i < targetObject.permissions.Count; i++)
         {
             var permission = targetObject.permissions[i];
