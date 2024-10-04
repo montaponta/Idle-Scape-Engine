@@ -1,6 +1,3 @@
-using DG.Tweening;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class AbstractUnitAction
@@ -30,7 +27,7 @@ public abstract class AbstractUnitAction
         }
 
         unit.unitActionType = actionType;
-        LogUnitAction(unit.unitActionType);
+        if (unit.logUnitActionType) LogUnitAction(unit.unitActionType);
         unit.unitAction = this;
     }
 

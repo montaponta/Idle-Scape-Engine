@@ -11,6 +11,7 @@ public abstract class AbstractUnit : MainRefs, IIDExtention
     public bool isEnable;
     public bool isNeedSave;
     public string id;
+    public bool logUnitActionType;
     [NonSerialized] public UnitActionType unitActionType = UnitActionType.idler;
     [NonSerialized] public AbstractUnitAction unitAction;
     [NonSerialized] public Animator animator;
