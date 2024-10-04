@@ -149,8 +149,8 @@ public class Main : MainRefs
     {
         var arr = obj.GetComponentsInChildren<T>(includeInactive);
         var component = default(T);
-        if (findFlag == 0) component = arr.Where(a => a.name == name).FirstOrDefault();
-        if (findFlag == 1) component = arr.Where(a => a.name.Contains(name)).FirstOrDefault();
+        if (findFlag == 0) component = arr.FirstOrDefault(a => a.name == name);
+        if (findFlag == 1) component = arr.FirstOrDefault(a => a.name.Contains(name));
         if (component != null) return component;
         return null;
     }

@@ -55,7 +55,7 @@ public abstract class AbstractTransport : QueueUnitPlace, IIDExtention
 
     public virtual void ExitTransportAllUnits()
     {
-        foreach (var unit in unitsList)
+        foreach (var unit in unitsPairs.Values)
         {
             OnTransportExit(unit, true);
         }
@@ -63,8 +63,8 @@ public abstract class AbstractTransport : QueueUnitPlace, IIDExtention
 
     public override bool CanEnter(AbstractUnit unit)
     {
-        if (unitsList.Contains(unit)) return true;
-        if (unitsList.Count >= queueLength) return false;
+        if (unitsPairs.ContainsValue(unit)) return true;
+        if (unitsPairs.Count >= queueLength) return false;
         return base.CanEnter(unit);
     }
 
@@ -77,7 +77,7 @@ public abstract class AbstractTransport : QueueUnitPlace, IIDExtention
 
     public int GetFreeSpace()
     {
-        return queueLength - unitsList.Count;
+        return queueLength - unitsPairs.Count;
     }
 
     public override void OnQueuePlaceReached(AbstractUnit unit)

@@ -113,9 +113,8 @@ public class CollectAndCraftFunctions : MainRefs
 
     public List<AbstractStorage> GetStoragesWithThisResource(ResourceType resourceType)
     {
-        var v = storagesList.Where(a => a.CanStorageKeepThisResource(resourceType));
-        if (v.Any()) return v.ToList();
-        return null;
+        var list = storagesList.FindAll(a => a.CanStorageKeepThisResource(resourceType));
+        return list;
     }
 
     public void AddResourceProducerToList(ResourceType resourceType, AbstractResourceProducer producer)
