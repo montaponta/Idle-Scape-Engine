@@ -9,6 +9,7 @@ public class IconGrid
     private AbstractUI ui;
     public Dictionary<Transform, Transform> iconPairs = new Dictionary<Transform, Transform>();
     private Transform mainFolder;
+    private float posYIncrement = 80;
 
     public IconGrid(AbstractUI ui, Transform mainFolder)
     {
@@ -28,7 +29,7 @@ public class IconGrid
     private void UpdatePosition(KeyValuePair<Transform, Transform> item)
     {
         var pos = ui.GetRef<Main>().mainCamera.WorldToScreenPoint(item.Key.position);
-        pos.y += 80 * ui.transform.localScale.y;
+        pos.y += posYIncrement * ui.transform.localScale.y;
         item.Value.transform.position = pos;
     }
 
@@ -79,5 +80,10 @@ public class IconGrid
         var go = iconPairs[target].gameObject;
         Object.Destroy(go);
         iconPairs.Remove(target);
+    }
+
+    public void SetPosYIncrement(float value)
+    {
+        posYIncrement = value;
     }
 }

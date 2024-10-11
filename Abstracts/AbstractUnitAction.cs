@@ -27,13 +27,13 @@ public abstract class AbstractUnitAction
         }
 
         unit.unitActionType = actionType;
-        if (unit.logUnitActionType) LogUnitAction(unit.unitActionType);
+        LogUnitAction(unit.unitActionType);
         unit.unitAction = this;
     }
 
     public void LogUnitAction(UnitActionType actionType)
     {
-        Debug.Log($"{unit.name}, {actionType}");
+        if (unit.logUnitActionType) Debug.Log($"{unit.name}, {actionType}");
     }
 
     public Collider[] FindNearColliders(float dist)
