@@ -248,6 +248,17 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
         return null;
     }
 
+    public virtual Transform GetLevelTransform(int level)
+    {
+        foreach (Transform item in transform)
+        {
+            if (item.name != $"Level {level}") continue;
+            return item;
+        }
+
+        return null;
+    }
+
     public void SetID(string id)
     {
         this.id = id;
