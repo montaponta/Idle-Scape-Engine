@@ -179,26 +179,6 @@ public class IDGameObjectData
 }
 
 [Serializable]
-public class GuestGood : ICloneable
-{
-	public string name;
-	public List<CollectablesItemCount> stepsList = new List<CollectablesItemCount>();
-	public float relaxTime;
-	public float price;
-	[NonSerialized] public AbstractUnit guest;
-
-	public object Clone()
-	{
-		GuestGood good = new GuestGood();
-		good.name = name;
-		good.stepsList = new List<CollectablesItemCount>(stepsList);
-		good.relaxTime = relaxTime;
-		good.price = price;
-		return good;
-	}
-}
-
-[Serializable]
 public class NeedInventoryResource : ICraftItemPrices
 {
 	public int fromLevel;
