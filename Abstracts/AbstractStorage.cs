@@ -69,20 +69,29 @@ public abstract class AbstractStorage : AbstractCraftItem
 		return Mathf.Clamp(count - reserved, 0, count);
 	}
 
-    public virtual void UpdateVisualStorageResourceCount(ResourceType resourceType, float exist) { }
+	public virtual void UpdateVisualStorageResourceCount(ResourceType resourceType, float exist) { }
 
-    public virtual void TakeStorageResource(ResourceType resourceType, float count)
-    {
-        SpendResource(resourceType, count);
-        var exist = GetAlreadyCollectedResource(resourceType);
-        object[] arr = new object[2];
-        arr[0] = new CollectablesItemCount { resourceType = resourceType, count = exist };
-        arr[1] = this;
-        OnObjectObservableChanged?.Invoke(arr);
-        UpdateVisualStorageResourceCount(resourceType, exist);
-    }
+	public virtual void TakeStorageResource(ResourceType resourceType, float count)
+	{
+		SpendResource(resourceType, count);
+		var exist = GetAlreadyCollectedResource(resourceType);
+		object[] arr = new object[2];
+		arr[0] = new CollectablesItemCount { resourceType = resourceType, count = exist };
+		arr[1] = this;
+		OnObjectObservableChanged?.Invoke(arr);
 
-    public virtual float GetStorageCapacity(ResourceType type)
+		StorageChangedResources storageEvent = new StorageChangedResources
+		{
+			type = resourceType,
+			count = exist,
+			storageSender = this
+		};
+		EventBus.Publish<StorageChangedResources>(storageEvent);
+
+		UpdateVisualStorageResourceCount(resourceType, exist);
+	}
+
+	public virtual float GetStorageCapacity(ResourceType type)
 	{
 		var collectables = resourceTypeList.Find(a => a.resourceType == type);
 		if (collectables == null) return 0;
@@ -139,14 +148,23 @@ public abstract class AbstractStorage : AbstractCraftItem
 
 	public override void ReceiveResource(ResourceType resourceType, float count, bool reduceInCollectingResource = true)
 	{
-        base.ReceiveResource(resourceType, count, reduceInCollectingResource);
-        var exist = GetAlreadyCollectedResource(resourceType);
-        object[] arr = new object[2];
-        arr[0] = new CollectablesItemCount { resourceType = resourceType, count = exist };
-        arr[1] = this;
-        OnObjectObservableChanged?.Invoke(arr);
-        UpdateVisualStorageResourceCount(resourceType, exist);
-    }
+		base.ReceiveResource(resourceType, count, reduceInCollectingResource);
+		var exist = GetAlreadyCollectedResource(resourceType);
+		object[] arr = new object[2];
+		arr[0] = new CollectablesItemCount { resourceType = resourceType, count = exist };
+		arr[1] = this;
+		OnObjectObservableChanged?.Invoke(arr);
+
+		StorageChangedResources storageEvent = new StorageChangedResources
+		{
+			type = resourceType,
+			count = exist,
+			storageSender = this
+		};
+		EventBus.Publish<StorageChangedResources>(storageEvent);
+
+		UpdateVisualStorageResourceCount(resourceType, exist);
+	}
 
 	protected override void OnAssemblingCompleteProcedure()
 	{
@@ -164,6 +182,14 @@ public abstract class AbstractStorage : AbstractCraftItem
 			arr[0] = new CollectablesItemCount { resourceType = item.resourceType, count = collectables.count };
 			arr[1] = this;
 			OnObjectObservableChanged?.Invoke(arr);
+
+			StorageChangedResources storageEvent = new StorageChangedResources
+			{
+				type = item.resourceType,
+				count = collectables.count,
+				storageSender = this
+			};
+			EventBus.Publish<StorageChangedResources>(storageEvent);
 		}
 	}
 
@@ -183,14 +209,12 @@ public abstract class AbstractStorage : AbstractCraftItem
 	public virtual Transform GetTargetFromAbility(ResourceCollectorAbility ability)
 	{
 		Transform target = null;
-		if(ability == null) return target;
+		if (ability == null) return target;
 		if (ability.craftItem) target = ability.craftItem.transform;
 		else if (ability.collectTaskItem) target = ability.collectTaskItem;
 		else target = ability.GetUnit().transform;
 		return target;
 	}
-
-	protected override void OnReceiveResourceProcedure(ResourceType resourceType, float count) { }
 }
 
 public enum StorageReserveType
