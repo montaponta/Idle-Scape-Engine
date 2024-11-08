@@ -64,7 +64,7 @@ public class ResourceCountPanel : AbstractPanel, IObjectObserver
         var observable = (IObjectObservable)data[1];
         if (resourceType1 == ResourceType.none && collectables.resourceType != resourceType) return;
         if (resourceType1 != ResourceType.none && collectables.resourceType != resourceType1) return;
-        float fill = Mathf.Floor(collectables.count);
+        float fill = collectables.count;
         observablePairs[observable] = fill;
         var sum = observablePairs.Values.Sum();
         countText.text = $"{addStringToBegining}{sum}{addStringToEnd}";
