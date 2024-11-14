@@ -12,9 +12,9 @@ public class ResourceCollectorAbility : AbstractUnitAbility, IObjectObservable
     public AbstractCraftItem craftItem;
     public Transform collectTaskItem;
     public (AbstractStorage storage, ResourceType resourceType, float count) reservedCollectables;
-    private int animPhaseValue = -1;
+    protected int animPhaseValue = -1;
     public Action<object[]> OnObjectObservableChanged;
-    private Coroutine waitAnimPhaseValueCoroutine;
+    protected Coroutine waitAnimPhaseValueCoroutine;
 
     public ResourceCollectorAbility(AbstractUnit unit) : base(unit)
     {
