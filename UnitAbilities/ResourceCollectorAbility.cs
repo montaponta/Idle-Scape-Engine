@@ -97,7 +97,7 @@ public class ResourceCollectorAbility : AbstractUnitAbility, IObjectObservable
         OnObjectObservableChanged?.Invoke(arr);
     }
 
-    private void ResetWaitAnimPhaseCoroutine()
+    protected virtual void ResetWaitAnimPhaseCoroutine()
     {
         if (waitAnimPhaseValueCoroutine != null)
             unit.StopCoroutine(waitAnimPhaseValueCoroutine);
