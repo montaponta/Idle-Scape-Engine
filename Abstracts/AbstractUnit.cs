@@ -267,8 +267,14 @@ public abstract class AbstractUnit : MainRefs, IIDExtention
 		return this;
 	}
 
-	private void OnDestroy()
+	public void ClearUnitActions()
 	{
 		foreach (var item in unitActionsList) { item.Dispose(); }
+		unitActionsList.Clear();
+	}
+
+	private void OnDestroy()
+	{
+		ClearUnitActions();
 	}
 }

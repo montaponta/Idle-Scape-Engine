@@ -273,4 +273,9 @@ public class Main : MainRefs
 		var coroutine = StartCoroutine(ActionCoroutine(actions, delay));
 		return coroutine;
 	}
+
+	private void OnDestroy()
+	{
+		EventBus.Dispose();
+	}
 }

@@ -42,4 +42,9 @@ public static class EventBus
 			}
 		}
 	}
+
+	public static void Dispose()
+	{
+		events.Clear();
+	}
 }
