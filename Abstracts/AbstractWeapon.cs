@@ -14,7 +14,7 @@ public abstract class AbstractWeapon : MainRefs
 		if (!unit) Init();
 	}
 
-	public void Init()
+	public virtual void Init()
 	{
 		unit = GetComponentInParent<AbstractUnit>();
 		SetDefaultParameters();

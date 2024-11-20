@@ -33,7 +33,7 @@ public class AbstractTabsUI : MainRefs
 		}
 	}
 
-	public void OnClickCloseBtn()
+	public virtual void OnClickCloseBtn()
 	{
 		GetRef<AbstractUI>().ShowHidePanel(gameObject);
 	}

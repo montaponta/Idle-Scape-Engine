@@ -4,8 +4,8 @@ using UnityEngine;
 public abstract class AbstractStorage : AbstractCraftItem
 {
 	public List<CollectablesItemCount> resourceTypeList;
-	private Dictionary<ResourceType, float> reservedResourceFillPair = new Dictionary<ResourceType, float>();
-	private Dictionary<Transform, List<CollectablesItemCount>> reservedResourceTakePair = new Dictionary<Transform, List<CollectablesItemCount>>();
+	protected Dictionary<ResourceType, float> reservedResourceFillPair = new Dictionary<ResourceType, float>();
+	protected Dictionary<Transform, List<CollectablesItemCount>> reservedResourceTakePair = new Dictionary<Transform, List<CollectablesItemCount>>();
 
 	public List<CollectablesItemCount> GetItemsList()
 	{
@@ -85,7 +85,7 @@ public abstract class AbstractStorage : AbstractCraftItem
 			count = exist,
 			storageSender = this
 		};
-		EventBus.Publish<StorageChangedResources>(storageEvent);
+		EventBus.Publish(storageEvent);
 
 		UpdateVisualStorageResourceCount(resourceType, exist);
 	}
@@ -160,7 +160,7 @@ public abstract class AbstractStorage : AbstractCraftItem
 			count = exist,
 			storageSender = this
 		};
-		EventBus.Publish<StorageChangedResources>(storageEvent);
+		EventBus.Publish(storageEvent);
 
 		UpdateVisualStorageResourceCount(resourceType, exist);
 	}

@@ -20,7 +20,7 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
     [HideInInspector] public AbstractResourceProducer resourceProducer;
     public UnsubscribingDelegate OnContainerOpenedAction = new UnsubscribingDelegate();
     public List<AbstractContainer> alsoOpenContainersList;
-    private List<CollectablesItemCount> collectedList = new List<CollectablesItemCount>();
+    protected List<CollectablesItemCount> collectedList = new List<CollectablesItemCount>();
     public Action<object[]> OnObjectObservableChanged;
 
     protected override void Start()

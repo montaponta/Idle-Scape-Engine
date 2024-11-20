@@ -8,17 +8,17 @@ public abstract class AbstractPanel : MainRefs
 	public virtual void Disable() { }
 	public virtual void Destroy() { }
 
-	private void OnEnable()
+	protected virtual void OnEnable()
 	{
 		OnEnableDelegate.Invoke();
 	}
 
-	private void OnDisable()
+	protected virtual void OnDisable()
 	{
 		OnDisableDelegate.Invoke();
 	}
 
-	private void OnDestroy()
+	protected virtual void OnDestroy()
 	{
 		OnDestroyDelegate.Invoke();
 	}

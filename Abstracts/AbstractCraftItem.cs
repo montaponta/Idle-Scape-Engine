@@ -8,7 +8,7 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
     public CraftItemSO SOData;
     public int level;
     public string id;
-    private List<CollectablesItemCount> collectedList = new List<CollectablesItemCount>();
+    protected List<CollectablesItemCount> collectedList = new List<CollectablesItemCount>();
     public Action OnAssemblingStart, OnAssemblingComplete;
     public Action<AbstractCraftItem> OnAssemblingStartSendItem, OnAssemblingCompleteSendItem;
     public Action<ResourceType, float> OnResourceCountChanged, OnReceiveResource;
@@ -16,7 +16,7 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
     [HideInInspector] public bool isInImproveProgress;
     public Action<AbstractCraftItem> OnCraftItemChosenForAssembly;
     [HideInInspector] public Timer craftTimer = new Timer(TimerMode.counterFixedUpdate, false);
-    private GameObject ghostItem;
+    protected GameObject ghostItem;
     public UnsubscribingDelegate OnAssemblingCompleteUnsubscribe = new UnsubscribingDelegate();
     public Action<object[]> OnObjectObservableChanged;
 

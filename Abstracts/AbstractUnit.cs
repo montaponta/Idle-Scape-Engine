@@ -72,7 +72,7 @@ public abstract class AbstractUnit : MainRefs, IIDExtention
 		if (unitAction != null) unitAction.FixedUpdate();
 	}
 
-	virtual protected void AlignHealthBar()
+	protected virtual void AlignHealthBar()
 	{
 		var pos = Camera.main.WorldToScreenPoint(transform.position);
 		healthBar.transform.position = pos + new Vector3(0, 100, 0) * GetRef<AbstractUI>().transform.localScale.y;

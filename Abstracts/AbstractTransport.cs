@@ -75,7 +75,7 @@ public abstract class AbstractTransport : QueueUnitPlace, IIDExtention
 
     protected virtual void SetUnitScale(AbstractUnit collector, int placeIndex) { }
 
-    public int GetFreeSpace()
+    public virtual int GetFreeSpace()
     {
         return queueLength - unitsList.Count;
     }
