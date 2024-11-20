@@ -7,7 +7,6 @@ public abstract class AbstractStorage : AbstractCraftItem
 	private Dictionary<ResourceType, float> reservedResourceFillPair = new Dictionary<ResourceType, float>();
 	private Dictionary<Transform, List<CollectablesItemCount>> reservedResourceTakePair = new Dictionary<Transform, List<CollectablesItemCount>>();
 
-
 	public List<CollectablesItemCount> GetItemsList()
 	{
 		return GetCollectedList();
@@ -189,7 +188,7 @@ public abstract class AbstractStorage : AbstractCraftItem
 				count = collectables.count,
 				storageSender = this
 			};
-			EventBus.Publish<StorageChangedResources>(storageEvent);
+			EventBus.Publish(storageEvent);
 		}
 	}
 

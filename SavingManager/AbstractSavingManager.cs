@@ -130,8 +130,6 @@ public abstract class AbstractSavingManager : MainRefs
         }
     }
 
-    public virtual void CreateCharacters(int count, KeyValuePair<string, UnitData> data, out List<AbstractUnit> newUnitsList) { newUnitsList = new List<AbstractUnit>(); }
-
     public virtual bool IsAllAdsDisabled()
     {
         //return shopSavingData.isAllAdsDisabled;

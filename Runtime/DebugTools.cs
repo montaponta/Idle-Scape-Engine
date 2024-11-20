@@ -6,7 +6,7 @@ using UnityEngine;
 public class DebugTools : MainRefs
 {
 	public bool isDebugActive, turnOffAllQuests;
-	public int spawnUnitsCount;
+	public List<SpawnUnitsData> spawnUnitsDataList;
 	public List<DebugCraftItemData> craftItemsList;
 	public List<ResourceToFillStorage> resourcesToFillStorage;
 	public List<CollectablesItemCount> uniqueResourcesStorageList;
@@ -14,7 +14,7 @@ public class DebugTools : MainRefs
 	public List<DebugInventory> inventoryList;
 	public List<ResourceTypeID> resourceTypeIDsList;
 
-	public void SetDebugData()
+	public virtual void SetDebugData()
 	{
 		foreach (var item in craftItemsList)
 		{
@@ -22,7 +22,12 @@ public class DebugTools : MainRefs
 		}
 
 		StartCoroutine(DelayStorageFill());
-        GetRef<AbstractSavingManager>().CreateCharacters(spawnUnitsCount, new KeyValuePair<string, UnitData>(), out var list);
+
+		foreach (var item in spawnUnitsDataList)
+		{
+			var pair = ("", new UnitData { id = item.id });
+			GetRef<AbstractCharacterFactory>().CreateCharacters(item.count, pair, out var list);
+		}
 
 		foreach (var item in containerStatesList)
 		{
@@ -32,17 +37,17 @@ public class DebugTools : MainRefs
 		foreach (var item in inventoryList)
 		{
 			if (item.isEnable)
-                GetRef<AbstractSavingManager>().GetSavingData<InventorySavingData>().AddInventory(item.inventoryType, item.collectables);
+				GetRef<AbstractSavingManager>().GetSavingData<InventorySavingData>().AddInventory(item.inventoryType, item.collectables);
 		}
 
 		foreach (var item in resourceTypeIDsList)
 		{
 			if (item.isEnable)
-                GetRef<AbstractSavingManager>().GetSavingData<InventorySavingData>().AddResourceTypeID(item.resourceType, item.id);
+				GetRef<AbstractSavingManager>().GetSavingData<InventorySavingData>().AddResourceTypeID(item.resourceType, item.id);
 		}
 	}
 
-	private IEnumerator DelayStorageFill()
+	protected virtual IEnumerator DelayStorageFill()
 	{
 		yield return new WaitForSeconds(0.1f);
 
@@ -97,5 +102,12 @@ public class DebugTools : MainRefs
 		public AbstractStorage storage;
 		public List<CollectablesItemCount> resourceTypesList;
 		public bool isEnable;
+	}
+
+	[Serializable]
+	public class SpawnUnitsData
+	{
+		public string id;
+		public int count;
 	}
 }
