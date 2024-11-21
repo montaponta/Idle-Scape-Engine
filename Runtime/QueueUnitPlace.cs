@@ -7,6 +7,11 @@ public class QueueUnitPlace : MainRefs
 	protected List<AbstractUnit> unitsList = new List<AbstractUnit>();
 	public int queueLength = 1;
 
+	private void Awake()
+	{
+		SetQueueLenght(queueLength);
+	}
+
 	public virtual bool CanEnter(AbstractUnit unit)
 	{
 		var exist = unitsList.Contains(unit);
