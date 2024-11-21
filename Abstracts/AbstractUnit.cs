@@ -16,7 +16,7 @@ public abstract class AbstractUnit : MainRefs, IIDExtention
 	[NonSerialized] public AbstractUnitAction unitAction;
 	[NonSerialized] public Animator animator;
 	[NonSerialized] public List<AbstractUnitAction> unitActionsList = new List<AbstractUnitAction>();
-	[NonSerialized] public NavMeshAgent agent;
+	public NavMeshAgent agent;
 	[NonSerialized] public int health = -1;
 	protected LineRenderer lineRenderer;
 	[NonSerialized] public ProgressBarUI healthBar;
