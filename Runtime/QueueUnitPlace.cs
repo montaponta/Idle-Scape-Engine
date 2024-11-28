@@ -67,6 +67,7 @@ public class QueueUnitPlace : MainRefs
 	public virtual Transform GetLastTargetPoint() { return transform; }
 	public virtual Transform GetLastFreeTargetPoint() { return transform; }
 	public virtual Transform GetTargetPointByIndex(int index) { return transform; }
+	public virtual int GetIndexByTargetPoint(Transform point) { return 0; }
 
 	public virtual int GetMyQueueIndex(AbstractUnit unit)
 	{
