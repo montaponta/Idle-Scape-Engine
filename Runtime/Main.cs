@@ -169,10 +169,9 @@ public class Main : MainRefs
 		SceneManager.LoadSceneAsync("Loading Scene");
 	}
 
-	public Vector3 GetAgentCirclePosition(Transform target, float radius, Transform unitTr, float pointFindAccuracy = 1)
+	public Vector3 GetAgentCirclePosition(Transform target, float radius, Transform unitTr, float pointFindAccuracy = 1, float curveLength = 0.7f)
 	{
 		List<Vector3> pointsList = new List<Vector3>();
-		var curveLength = 0.7f;
 		var alpha = (180 * curveLength) / (Mathf.PI * radius);
 		var angle = 0f;
 		var x0 = target.position.x;
@@ -191,7 +190,6 @@ public class Main : MainRefs
 		pointsList = pointsList.FindAll(a => NavMesh.SamplePosition(a, out navmeshHit, pointFindAccuracy, NavMesh.AllAreas));
 		var tempList = pointsList.Where(a => !shared.IsPointBehindObstacle(target.position, a, radius, target)).ToList();
 		if (tempList.Any()) pointsList = tempList;
-		//if (pointsList.Count == 0) Debug.LogError("Not find any points on navmesh");
 		List<Vector3> pointsList1 = new List<Vector3>(pointsList);
 		List<AbstractUnit> otherUnitsList = FindObjectsOfType<AbstractUnit>().ToList();
 		otherUnitsList = otherUnitsList.FindAll(a => a.target == target && a.transform != unitTr);
