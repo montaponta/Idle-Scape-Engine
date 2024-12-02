@@ -126,7 +126,7 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
 		OnAssemblingComplete?.Invoke();
 		OnAssemblingCompleteSendItem?.Invoke(this);
 		OnAssemblingCompleteUnsubscribe.Invoke();
-		EventBus.Publish(new AssemblingCompleteEvent { craftItem = this });
+		EventBus.Publish(new AssemblingCompleteEvent { craftItem = this, type = SOData.craftItem });
 	}
 
 	protected virtual void OnAssemblingStartProcedure() { }
