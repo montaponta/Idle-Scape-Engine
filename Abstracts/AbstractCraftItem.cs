@@ -35,7 +35,7 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
 		craftTimer.TimerUpdate();
 	}
 
-	protected void ImproveLevel()
+	protected virtual void ImproveLevel()
 	{
 		level++;
 		SetItemLevel(level);
@@ -217,7 +217,7 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
 		return collectedList;
 	}
 
-	public void SetCollectedList(List<CollectablesItemCount> list)
+	public virtual void SetCollectedList(List<CollectablesItemCount> list)
 	{
 		collectedList = list;
 	}
@@ -260,27 +260,27 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
 		return null;
 	}
 
-	public void SetID(string id)
+	public virtual void SetID(string id)
 	{
 		this.id = id;
 	}
 
-	public string GetID()
+	public virtual string GetID()
 	{
 		return id;
 	}
 
-	public GameObject GetGameObject()
+	public virtual GameObject GetGameObject()
 	{
 		return gameObject;
 	}
 
-	public UnityEngine.Object GetObject()
+	public virtual UnityEngine.Object GetObject()
 	{
 		return this;
 	}
 
-	public IScriptableObjectData GetSOData()
+	public virtual IScriptableObjectData GetSOData()
 	{
 		return SOData;
 	}
@@ -328,17 +328,17 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
 		return prices;
 	}
 
-	public void AddObjectObserver(IObjectObserver observer)
+	public virtual void AddObjectObserver(IObjectObserver observer)
 	{
 		OnObjectObservableChanged += observer.OnObjectObservableChanged;
 	}
 
-	public void RemoveObjectObserver(IObjectObserver observer)
+	public virtual void RemoveObjectObserver(IObjectObserver observer)
 	{
 		OnObjectObservableChanged -= observer.OnObjectObservableChanged;
 	}
 
-	public void GetObjectObservableState(IObjectObserver observer, object[] data)
+	public virtual void GetObjectObservableState(IObjectObserver observer, object[] data)
 	{
 		var type = (ResourceType)data[0];
 		object[] arr = new object[2];
@@ -347,7 +347,7 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
 		observer.OnObjectObservableChanged(arr);
 	}
 
-	public Transform GetObjectObservableTransform()
+	public virtual Transform GetObjectObservableTransform()
 	{
 		return transform;
 	}
