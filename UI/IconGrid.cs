@@ -1,7 +1,5 @@
-using DG.Tweening;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -38,7 +36,7 @@ public class IconGrid
 	{
 		var go = Object.Instantiate(iconPrefab, mainFolder);
 		if (!iconPairs.ContainsKey(target)) iconPairs.Add(target, mainFolder);
-		UpdatePosition(iconPairs.Last());
+		Update();
 		return go.GetComponent<T>();
 	}
 
@@ -53,7 +51,7 @@ public class IconGrid
 		}
 
 		go.transform.SetParent(iconPairs[target]);
-		UpdatePosition(iconPairs.Last());
+		Update();
 		return go.GetComponent<T>();
 	}
 
