@@ -79,7 +79,7 @@ public abstract class AbstractStorage : AbstractCraftItem
 		arr[1] = this;
 		OnObjectObservableChanged?.Invoke(arr);
 
-		StorageChangedResources storageEvent = new StorageChangedResources
+		StorageChangedResourcesEvnt storageEvent = new StorageChangedResourcesEvnt
 		{
 			type = resourceType,
 			count = exist,
@@ -154,7 +154,7 @@ public abstract class AbstractStorage : AbstractCraftItem
 		arr[1] = this;
 		OnObjectObservableChanged?.Invoke(arr);
 
-		StorageChangedResources storageEvent = new StorageChangedResources
+		StorageChangedResourcesEvnt storageEvent = new StorageChangedResourcesEvnt
 		{
 			type = resourceType,
 			count = exist,
@@ -167,7 +167,7 @@ public abstract class AbstractStorage : AbstractCraftItem
 
 	protected override void OnAssemblingCompleteProcedure()
 	{
-		var price = GetCraftPrices1(level, SOData.GetIPricesFromNeedResourceList());
+		var price = GetCraftPrices1(level, GetSOData().GetIPricesFromNeedResourceList());
 		var collected = GetCollectedList();
 
 		foreach (var item in price)
@@ -182,7 +182,7 @@ public abstract class AbstractStorage : AbstractCraftItem
 			arr[1] = this;
 			OnObjectObservableChanged?.Invoke(arr);
 
-			StorageChangedResources storageEvent = new StorageChangedResources
+			StorageChangedResourcesEvnt storageEvent = new StorageChangedResourcesEvnt
 			{
 				type = item.resourceType,
 				count = collectables.count,

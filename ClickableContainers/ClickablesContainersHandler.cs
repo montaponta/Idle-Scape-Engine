@@ -227,7 +227,7 @@ public class ClickablesContainersHandler : MainRefs
 	{
 		if (openContainerDatas.Any())
 		{
-			var data = openContainerDatas.Values.Where(a => a.unitList.Count < a.container.SOData.unitsCount).FirstOrDefault();
+			var data = openContainerDatas.Values.Where(a => a.unitList.Count < a.container.GetSOData().GetUnitsCount()).FirstOrDefault();
 			if (data == null) return null;
 			return data.container;
 		}

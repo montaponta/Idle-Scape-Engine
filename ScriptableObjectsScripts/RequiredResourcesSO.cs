@@ -3,7 +3,7 @@ using UnityEngine;
 
 
 [CreateAssetMenu(fileName = "RequiredResourceData", menuName = "ScriptableObjects/RequiredResourceData")]
-public class RequiredResourcesSO : ScriptableObject, IScriptableObjectData
+public class RequiredResourcesSO : ScriptableObject, IRequiredResourcesSOData
 {
     public List<NeedResource> itemsList;
     public List<NeedOtherResource> needOtherResourceList;
@@ -17,7 +17,6 @@ public class RequiredResourcesSO : ScriptableObject, IScriptableObjectData
     {
         itemsList = new List<NeedResource>();
     }
-
 
     public List<NeedResource> GetNeedResourceList()
     {
@@ -83,9 +82,9 @@ public class RequiredResourcesSO : ScriptableObject, IScriptableObjectData
         return needResourceTypeIDsList;
     }
 
-    public List<ProduceResource> GetProduceResourceList()
-    {
-        throw new System.NotImplementedException();
-    }
+	public int GetUnitsCount()
+	{
+		return unitsCount;
+	}
 }
 

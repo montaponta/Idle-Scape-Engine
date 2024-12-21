@@ -1,4 +1,4 @@
-public struct AssemblingCompleteEvent : IBusEvent
+public struct AssemblingCompleteEvnt : IBusEvent
 {
     public AbstractCraftItem craftItem;
     public ResourceType type;

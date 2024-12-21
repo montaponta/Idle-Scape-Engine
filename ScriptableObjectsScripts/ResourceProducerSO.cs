@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 [CreateAssetMenu(fileName = "ResourceProducerData", menuName = "ScriptableObjects/ResourceProducerData")]
-public class ResourceProducerSO : ScriptableObject, IScriptableObjectData
+public class ResourceProducerSO : ScriptableObject, IResourceProducerSOData
 {
     public List<ProduceResource> itemsList;
     public List<AdditionalParameters> additionalParamsList = new List<AdditionalParameters>();
@@ -18,7 +18,12 @@ public class ResourceProducerSO : ScriptableObject, IScriptableObjectData
         return additionalParamsList;
     }
 
-    public float GetDistanceToStop()
+	public int GetUnitsCount()
+	{
+		return collectorsCount;
+	}
+
+	public float GetDistanceToStop()
     {
         return distanceToStop;
     }
@@ -73,4 +78,9 @@ public class ResourceProducerSO : ScriptableObject, IScriptableObjectData
         var v = (T)GetValueByTag(tag, typeof(T));
         return v != null ? v : default(T);
     }
+
+	public float GetPriority()
+	{
+        return priority;
+	}
 }

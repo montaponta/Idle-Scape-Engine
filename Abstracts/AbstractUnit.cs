@@ -232,6 +232,11 @@ public abstract class AbstractUnit : MainRefs, IIDExtention
 
 	public virtual float GetWatchingDistance() { return 10; }
 	public abstract IUnitData GetUnitData();
+
+	public T GetSOData<T>() where T : IUnitData
+	{
+		return (T)GetUnitData();
+	}
 	public virtual void PlayAnimation(string animation, bool isPlay) { animator.SetBool(animation, isPlay); }
 	protected virtual void DestroyUnit()
 	{

@@ -6,7 +6,6 @@ using UnityEngine;
 
 public abstract class AbstractResourceProducer : MainRefs, IIDExtention, ISODataHandler, IObjectObservable
 {
-    public ResourceProducerSO SOData;
     public CollectAnimationType animationType;
     public Dictionary<ResourceType, float> resourceGiven = new Dictionary<ResourceType, float>();
     public Dictionary<ResourceCollectorAbility, (ResourceType, float)> reservedResourcePairs = new Dictionary<ResourceCollectorAbility, (ResourceType, float)>();
@@ -37,7 +36,7 @@ public abstract class AbstractResourceProducer : MainRefs, IIDExtention, ISOData
 
     protected virtual ProduceResource GetCurrentItem(ResourceType requiredResourceType)
     {
-        var v = SOData.itemsList.Find(a => a.produceResourceType == requiredResourceType);
+        var v = GetSOData().GetProduceResourceList().Find(a => a.produceResourceType == requiredResourceType);
         if (v == null) return null;
         ProduceResource produceResource = (ProduceResource)v.Clone();
         return produceResource;
@@ -50,7 +49,7 @@ public abstract class AbstractResourceProducer : MainRefs, IIDExtention, ISOData
         if (remain == 0) return false;
         if (reservedCollectorsList.Contains(ability)) return true;
         else if (remain - reservedResourcePairs.Values.Where(a => a.Item1 == requiredResourceType).Sum(a => a.Item2) <= 0) return false;
-        else return reservedCollectorsList.Count < SOData.collectorsCount;
+        else return reservedCollectorsList.Count < GetSOData().GetUnitsCount();
     }
 
     public virtual void GetResource(ResourceType requiredResourceType, float needCount, ResourceCollectorAbility resourceCollectorAbility = null)
@@ -83,7 +82,7 @@ public abstract class AbstractResourceProducer : MainRefs, IIDExtention, ISOData
         {
             float f = 0;
 
-            foreach (var item in SOData.itemsList)
+            foreach (var item in GetSOData().GetProduceResourceList())
             {
                 f = GetRemainResourceCount(item.produceResourceType);
                 if (f > 0) break;
@@ -113,7 +112,7 @@ public abstract class AbstractResourceProducer : MainRefs, IIDExtention, ISOData
 
     public virtual float GetResourceProduceCount(ResourceType type)
     {
-        var v = SOData.itemsList.Find(a => a.produceResourceType == type);
+        var v = GetSOData().GetProduceResourceList().Find(a => a.produceResourceType == type);
         if (v != null) return v.produceCount;
         return 0;
     }
@@ -128,7 +127,7 @@ public abstract class AbstractResourceProducer : MainRefs, IIDExtention, ISOData
 
     public virtual bool IsResourceProducerEmpty()
     {
-        foreach (var item in SOData.itemsList)
+        foreach (var item in GetSOData().GetProduceResourceList())
         {
             if (GetRemainResourceCount(item.produceResourceType) > 0) return false;
         }
@@ -191,13 +190,20 @@ public abstract class AbstractResourceProducer : MainRefs, IIDExtention, ISOData
         return this;
     }
 
-    public IScriptableObjectData GetSOData()
-    {
-        return SOData;
-    }
+    public abstract IResourceProducerSOData GetSOData();
 
-    public void AddObjectObserver(IObjectObserver observer)
-    {
+	public T GetSOData<T>() where T : IScriptableObjectData
+	{
+		return (T)GetSOData();
+	}
+
+	public IScriptableObjectData GetScriptableObjectData()
+	{
+		return GetSOData();
+	}
+
+	public void AddObjectObserver(IObjectObserver observer)
+	{
         OnObjectObservableChanged += observer.OnObjectObservableChanged;
     }
 

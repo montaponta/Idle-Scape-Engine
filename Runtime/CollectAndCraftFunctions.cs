@@ -32,7 +32,7 @@ public class CollectAndCraftFunctions : MainRefs
 #endif
 	}
 
-	public (ResourceType needType, float needLevel, bool canOpen) CheckResourceProducerNeedConditions(IScriptableObjectData SOData)
+	public (ResourceType needType, float needLevel, bool canOpen) CheckResourceProducerNeedConditions(IResourceProducerSOData SOData)
 	{
 		List<(ResourceType needType, float needLevel, bool canOpen)> list = new List<(ResourceType, float, bool)>();
 
@@ -54,9 +54,9 @@ public class CollectAndCraftFunctions : MainRefs
 	public (ResourceType type, float needCountOrLevel, bool canOpen, NeedConditionType needType) CheckCraftItemNeedConditions(AbstractCraftItem craftItem)
 	{
 		List<(ResourceType, float, bool, NeedConditionType)> list = new List<(ResourceType, float, bool, NeedConditionType needType)>();
-		var SOData = craftItem.SOData;
+		var SOData = craftItem.GetSOData();
 
-		foreach (var item in SOData.needOtherResourceList)
+		foreach (var item in SOData.GetNeedOtherResourceList())
 		{
 			if (craftItem.level >= item.forCraftLevel) continue;
 			var needCraftItem = GetCraftItem(item.needResource);
@@ -66,7 +66,7 @@ public class CollectAndCraftFunctions : MainRefs
 				list.Add((item.needResource, item.needResourceLevel, false, NeedConditionType.craftItem));
 		}
 
-		var prices = craftItem.GetCraftPrices(craftItem.level + 1, craftItem.SOData.GetIPricesFromNeedResourceList());
+		var prices = craftItem.GetCraftPrices(craftItem.level + 1, craftItem.GetSOData().GetIPricesFromNeedResourceList());
 
 		foreach (var item in prices)
 		{
@@ -74,7 +74,7 @@ public class CollectAndCraftFunctions : MainRefs
 			list.Add((item.Item1.resourceType, item.Item1.count, existResource, NeedConditionType.collectableResource));
 		}
 
-		prices = craftItem.GetCraftPrices(craftItem.level + 1, craftItem.SOData.GetIPricesFromNeedInventoryResourceList(), true);
+		prices = craftItem.GetCraftPrices(craftItem.level + 1, craftItem.GetSOData().GetIPricesFromNeedInventoryResourceList(), true);
 
 		foreach (var item in prices)
 		{
@@ -94,7 +94,7 @@ public class CollectAndCraftFunctions : MainRefs
 
 	public AbstractCraftItem GetCraftItem(ResourceType type)
 	{
-		var craftItem = craftItemsList.Find(a => a.SOData.craftItem == type);
+		var craftItem = craftItemsList.Find(a => a.GetSOData().GetCraftItemType() == type);
 		return craftItem;
 	}
 
@@ -134,7 +134,7 @@ public class CollectAndCraftFunctions : MainRefs
 	public void SortResourceList()
 	{
 		activeResourceProducersList = activeResourceProducersList
-			.OrderByDescending(a => a.producer.SOData.priority).ToList();
+			.OrderByDescending(a => a.producer.GetSOData().GetPriority()).ToList();
 	}
 
 	public void AddNewCraftTask(AbstractCraftItem craftItem)
@@ -142,7 +142,7 @@ public class CollectAndCraftFunctions : MainRefs
 		if (craftDatas.ContainsKey(craftItem)) return;
 		CraftData craftData = new CraftData();
 		craftData.craftItem = craftItem;
-		var need = craftItem.GetCraftPrices1(craftItem.level + 1, craftItem.SOData.GetIPricesFromNeedResourceList());
+		var need = craftItem.GetCraftPrices1(craftItem.level + 1, craftItem.GetSOData().GetIPricesFromNeedResourceList());
 
 		foreach (var item in need)
 		{
@@ -168,8 +168,8 @@ public class CollectAndCraftFunctions : MainRefs
 
 	public float GetCraftTime(AbstractCraftItem craftItem)
 	{
-		var levelIncrement = craftItem.SOData.craftParams.levelIncrement * craftItem.level;
-		var craftItemBaseTime = craftItem.SOData.craftParams.craftTime;
+		var levelIncrement = craftItem.GetSOData().GetCraftParams().levelIncrement * craftItem.level;
+		var craftItemBaseTime = craftItem.GetSOData().GetCraftParams().craftTime;
 		var craftItemTime = craftItemBaseTime + craftItemBaseTime * levelIncrement;
 		var time = (resourceCollectorsList[0].GetUnitAbility<ResourceCollectorAbility>(AbilityType.collect).GetCraftTime(craftItemTime)) / speedMultiplayer;
 		return time;
@@ -179,7 +179,7 @@ public class CollectAndCraftFunctions : MainRefs
 	{
 		if (craftDatas.Any())
 		{
-			var data = craftDatas.Values.FirstOrDefault(a => a.unitsList.Count < a.craftItem.SOData.unitsCount);
+			var data = craftDatas.Values.FirstOrDefault(a => a.unitsList.Count < a.craftItem.GetSOData().GetUnitsCount());
 			if (data == null) return null;
 			return data.craftItem;
 		}

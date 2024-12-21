@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResourceReciever, IObjectObservable
+public abstract class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResourceReciever, IObjectObservable
 {
-	public RequiredResourcesSO SOData;
 	public bool isNeedTap, isCreateResourcesPanel, isEnable = true;
 	public CollectAnimationType openTypeAnim = CollectAnimationType.none;
 	public Vector2 spawnForceRangeZ, spawnForceRangeXY;
@@ -46,7 +45,7 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
 		{
 			isInHackProcess = true;
 			unlockTimer.OnTimerReached += OnContainerOpened;
-			var time = (float)SOData.GetValueByTag("OpenTime", typeof(float));
+			var time = GetSOData().GetValueByTag<float>("OpenTime");
 			unlockTimer.StartTimer(time);
 			OnStartOpenContainerProcedure();
 		}
@@ -98,7 +97,7 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
 
 	public virtual List<ProduceResource> GetLootItems()
 	{
-		return resourceProducer.SOData.itemsList;
+		return resourceProducer.GetSOData().GetProduceResourceList();
 	}
 
 	public virtual bool IsHacked()
@@ -166,9 +165,16 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
 		unlockTimer.count++;
 	}
 
-	public virtual IScriptableObjectData GetSOData()
+	public abstract IRequiredResourcesSOData GetSOData();
+
+	public T GetSOData<T>() where T : IScriptableObjectData
 	{
-		return SOData;
+		return (T)GetSOData();
+	}
+
+	public IScriptableObjectData GetScriptableObjectData()
+	{
+		return GetSOData();
 	}
 
 	public virtual void SetID(string id)
@@ -249,7 +255,7 @@ public class AbstractContainer : MainRefs, IIDExtention, ISODataHandler, IResour
 	{
 		List<CollectablesItemCount> pricesList = new List<CollectablesItemCount>();
 
-		foreach (var item in SOData.itemsList)
+		foreach (var item in GetSOData().GetNeedResourceList())
 		{
 			CollectablesItemCount collectables = new CollectablesItemCount();
 			collectables.resourceType = item.collectablesItemCount.resourceType;

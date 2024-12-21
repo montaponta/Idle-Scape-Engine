@@ -5,7 +5,6 @@ using UnityEngine;
 
 public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler, IObjectObservable, IResourceReciever
 {
-	public CraftItemSO SOData;
 	public int level;
 	public string id;
 	protected List<CollectablesItemCount> collectedList = new List<CollectablesItemCount>();
@@ -117,7 +116,7 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
 		craftTimer.count++;
 	}
 
-	protected virtual void AssemblingComplete()
+	public virtual void AssemblingComplete()
 	{
 		ImproveLevel();
 		isInImproveProgress = false;
@@ -126,7 +125,7 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
 		OnAssemblingComplete?.Invoke();
 		OnAssemblingCompleteSendItem?.Invoke(this);
 		OnAssemblingCompleteUnsubscribe.Invoke();
-		EventBus.Publish(new AssemblingCompleteEvent { craftItem = this, type = SOData.craftItem });
+		EventBus.Publish(new AssemblingCompleteEvnt { craftItem = this, type = GetSOData().GetCraftItemType() });
 	}
 
 	protected virtual void OnAssemblingStartProcedure() { }
@@ -141,7 +140,7 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
 
 	protected virtual void ClearInventoryRequaredResources()
 	{
-		var prices = GetCraftPrices(level, SOData.GetIPricesFromNeedInventoryResourceList(), true);
+		var prices = GetCraftPrices(level, GetSOData().GetIPricesFromNeedInventoryResourceList(), true);
 
 		foreach (var pr in prices)
 		{
@@ -279,9 +278,16 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
 		return this;
 	}
 
-	public virtual IScriptableObjectData GetSOData()
+	public abstract ICraftItemSOData GetSOData();
+
+	public T GetSOData<T>() where T : IScriptableObjectData
 	{
-		return SOData;
+		return (T)GetSOData();
+	}
+
+	public IScriptableObjectData GetScriptableObjectData()
+	{
+		return GetSOData();
 	}
 
 	public virtual List<(CollectablesItemCount, ICraftItemPrices)> GetCraftPrices(int forLevel, List<ICraftItemPrices> list, bool isFullPricesList = false)
@@ -296,11 +302,11 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
 
 			for (int i = 0; i < forLevel; i++)
 			{
-				if (i > 0) coef = SOData.craftParams.coef;
+				if (i > 0) coef = GetSOData().GetCraftParams().coef;
 
-				if (SOData.craftParams.coefOverridesList.Any())
+				if (GetSOData().GetCraftParams().coefOverridesList.Any())
 				{
-					var overrideCoef = SOData.craftParams.coefOverridesList.Find(a => a.forLevel == i + 1);
+					var overrideCoef = GetSOData().GetCraftParams().coefOverridesList.Find(a => a.forLevel == i + 1);
 					if (overrideCoef != null) coef = overrideCoef.coef;
 				}
 

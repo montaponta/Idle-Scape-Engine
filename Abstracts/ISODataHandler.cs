@@ -1,4 +1,5 @@
 public interface ISODataHandler
 {
-	public IScriptableObjectData GetSOData();
+	public T GetSOData<T>() where T : IScriptableObjectData;
+	public IScriptableObjectData GetScriptableObjectData();
 }

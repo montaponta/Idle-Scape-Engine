@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "CraftItemData", menuName = "ScriptableObjects/CraftItemData")]
-public class CraftItemSO : ScriptableObject, IScriptableObjectData
+public class CraftItemSO : ScriptableObject, ICraftItemSOData
 {
 	public ResourceType craftItem;
 	public List<NeedResource> needResourceList;
@@ -79,8 +79,18 @@ public class CraftItemSO : ScriptableObject, IScriptableObjectData
 		return needResourceTypeIDsList;
     }
 
-    public List<ProduceResource> GetProduceResourceList()
-    {
-        throw new System.NotImplementedException();
-    }
+	public ResourceType GetCraftItemType()
+	{
+		return craftItem;
+	}
+
+	public CraftParameters GetCraftParams()
+	{
+		return craftParams;
+	}
+
+	public int GetUnitsCount()
+	{
+		return unitsCount;
+	}
 }
