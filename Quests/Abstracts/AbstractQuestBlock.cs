@@ -10,6 +10,7 @@ public abstract class AbstractQuestBlock : MainRefs
 	public GUILayoutOption horizontalOption = GUILayout.ExpandWidth(true);
 	public GUILayoutOption verticalOption = GUILayout.ExpandHeight(true);
 	[NonSerialized] public GUIStyle boldAndItalicStyle;
+	protected QuestsSavingData QuestsSavingData => GetRef<AbstractSavingManager>().GetSavingData<QuestsSavingData>(SavingDataType.Quests);
 
 	private void OnEnable()
 	{
@@ -170,7 +171,7 @@ public abstract class AbstractQuestBlock : MainRefs
 		{
 			for (int i = 0; i < blockPart.revertQuestsOnExitList.Count; i++)
 			{
-				GetRef<AbstractSavingManager>().GetSavingData<QuestsSavingData>().ChangeQuestState($"{blockPart.revertQuestsOnExitList[i].tag}_{questSystemID}", blockPart.revertQuestsOnExitList[i].questProgressType, false);
+				QuestsSavingData.ChangeQuestState($"{blockPart.revertQuestsOnExitList[i].tag}_{questSystemID}", blockPart.revertQuestsOnExitList[i].questProgressType, false);
 			}
 		}
 	}

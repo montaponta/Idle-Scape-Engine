@@ -15,7 +15,7 @@ public class QuestsSavingData : AbstractSavingData
 		questPair.Clear();
 	}
 
-	public void AddQuestDatas(List<QuestData> list, Quests quests)
+	public virtual void AddQuestDatas(List<QuestData> list, Quests quests)
 	{
 		foreach (var item in list)
 		{
@@ -23,7 +23,7 @@ public class QuestsSavingData : AbstractSavingData
 		}
 	}
 
-	public void ChangeQuestState(string fullTag, QuestProgressType type, bool save = true)
+	public virtual void ChangeQuestState(string fullTag, QuestProgressType type, bool save = true)
 	{
 		questPair[fullTag] = type;
 		if (save) SaveData(false);

@@ -15,6 +15,7 @@ public class SoundMusic : MainRefs
 	private Timer mainThemeTimer = new Timer(TimerMode.counterFixedUpdate);
 	private bool temporaryMuteMusic;
 	private Dictionary<Object, AudioSource> loopSoundPair = new Dictionary<Object, AudioSource>();
+	protected GeneralSavingData GeneralSavingData => GetRef<AbstractSavingManager>().GetSavingData<GeneralSavingData>(SavingDataType.General);
 
 	private void Awake()
 	{
@@ -30,8 +31,8 @@ public class SoundMusic : MainRefs
 	{
 		audioSource = GetComponent<AudioSource>();
 		mainThemeTimer.OnTimerReached = PlayMainThemeSound;
-		SetSoundEnable(GetRef<AbstractSavingManager>().GetSavingData<GeneralSavingData>().isSoundOn);
-		SetMusicEnable(GetRef<AbstractSavingManager>().GetSavingData<GeneralSavingData>().isMusicOn);
+		SetSoundEnable(GeneralSavingData.isSoundOn);
+		SetMusicEnable(GeneralSavingData.isMusicOn);
 	}
 
 	private void FixedUpdate()
@@ -111,7 +112,7 @@ public class SoundMusic : MainRefs
 
 	public void TemporaryMuteSound(bool b)
 	{
-		if (!GetRef<AbstractSavingManager>().GetSavingData<GeneralSavingData>().isSoundOn) return;
+		if (!GeneralSavingData.isSoundOn) return;
 		var arr = FindObjectsOfType<AudioSource>();
 
 		foreach (var item in arr)
@@ -123,7 +124,7 @@ public class SoundMusic : MainRefs
 
 	public void TemporaryMuteMusic(bool b)
 	{
-		if (!GetRef<AbstractSavingManager>().GetSavingData<GeneralSavingData>().isMusicOn) return;
+		if (!GeneralSavingData.isMusicOn) return;
 		var item = transform.Find("MainTheme").GetComponent<AudioSource>();
 		item.mute = b;
 		temporaryMuteMusic = b;

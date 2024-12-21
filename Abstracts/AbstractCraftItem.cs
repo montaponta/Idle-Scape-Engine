@@ -19,13 +19,13 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
 	protected GameObject ghostItem;
 	public UnsubscribingDelegate OnAssemblingCompleteUnsubscribe = new UnsubscribingDelegate();
 	public Action<object[]> OnObjectObservableChanged;
+	private InventorySavingData InventorySavingData => GetRef<AbstractSavingManager>().GetSavingData<InventorySavingData>(SavingDataType.Inventory);
+	private CraftItemsSavingData CraftItemsSavingData => GetRef<AbstractSavingManager>().GetSavingData<CraftItemsSavingData>(SavingDataType.CraftItems);
 
 	protected override void Start()
 	{
 		if (!GetRef<Main>().debugTools.isDebugActive)
-			GetRef<AbstractSavingManager>()
-				.GetSavingData<CraftItemsSavingData>()
-				.GetCraftItemState(this);
+			CraftItemsSavingData.GetCraftItemState(this);
 		SetItemLevel(level);
 		craftTimer.OnTimerReached = AssemblingComplete;
 	}
@@ -142,11 +142,10 @@ public abstract class AbstractCraftItem : MainRefs, IIDExtention, ISODataHandler
 	protected virtual void ClearInventoryRequaredResources()
 	{
 		var prices = GetCraftPrices(level, SOData.GetIPricesFromNeedInventoryResourceList(), true);
-		var isd = GetRef<AbstractSavingManager>().GetSavingData<InventorySavingData>();
 
 		foreach (var pr in prices)
 		{
-			isd.RemoveInventory((ResourceType)pr.Item2.GetOtherParameters()[0], pr.Item1);
+			InventorySavingData.RemoveInventory((ResourceType)pr.Item2.GetOtherParameters()[0], pr.Item1);
 		}
 	}
 

@@ -9,6 +9,7 @@ public class QuestsManager : MainRefs
 	public List<GameObject> questBlocksList;
 	public Action<QuestData> OnQuestStart, OnQuestComplete;
 	public Dictionary<string, Quests> questsPair = new Dictionary<string, Quests>();
+	private QuestsSavingData QuestsSavingData => GetRef<AbstractSavingManager>().GetSavingData<QuestsSavingData>(SavingDataType.Quests);
 
 	private void Awake()
 	{
@@ -81,14 +82,14 @@ public class QuestsManager : MainRefs
 	public (bool isComplete, QuestProgressType progressType) GetQuestState(string tag, string questSystemID)
 	{
 		var fullTag = $"{tag}_{questSystemID}";
-		var pair = GetRef<AbstractSavingManager>().GetSavingData<QuestsSavingData>().questPair;
-        if (!pair.TryGetValue(fullTag, out var v)) return (false, QuestProgressType.none);
-        return (pair[fullTag] == QuestProgressType.completed, pair[fullTag]);
+		var pair = QuestsSavingData.questPair;
+		if (!pair.TryGetValue(fullTag, out var v)) return (false, QuestProgressType.none);
+		return (pair[fullTag] == QuestProgressType.completed, pair[fullTag]);
 	}
 
 	public (bool isComplete, QuestProgressType progressType) GetQuestState(string fullTag)
 	{
-		var pair = GetRef<AbstractSavingManager>().GetSavingData<QuestsSavingData>().questPair;
+		var pair = QuestsSavingData.questPair;
 		if (!pair.ContainsKey(fullTag)) return (false, QuestProgressType.none);
 		return (pair[fullTag] == QuestProgressType.completed, pair[fullTag]);
 	}
@@ -100,6 +101,6 @@ public class QuestsManager : MainRefs
 			item.ApplicationQuit();
 		}
 
-		GetRef<AbstractSavingManager>().GetSavingData<QuestsSavingData>().SaveDataImmediately();
+		QuestsSavingData.SaveDataImmediately();
 	}
 }

@@ -14,6 +14,8 @@ public class DebugTools : MainRefs
 	public List<DebugInventory> inventoryList;
 	public List<ResourceTypeID> resourceTypeIDsList;
 
+	protected InventorySavingData InventorySavingData => GetRef<AbstractSavingManager>().GetSavingData<InventorySavingData>(SavingDataType.Inventory);
+
 	public virtual void SetDebugData()
 	{
 		foreach (var item in craftItemsList)
@@ -37,13 +39,13 @@ public class DebugTools : MainRefs
 		foreach (var item in inventoryList)
 		{
 			if (item.isEnable)
-				GetRef<AbstractSavingManager>().GetSavingData<InventorySavingData>().AddInventory(item.inventoryType, item.collectables);
+				InventorySavingData.AddInventory(item.inventoryType, item.collectables);
 		}
 
 		foreach (var item in resourceTypeIDsList)
 		{
 			if (item.isEnable)
-				GetRef<AbstractSavingManager>().GetSavingData<InventorySavingData>().AddResourceTypeID(item.resourceType, item.id);
+				InventorySavingData.AddResourceTypeID(item.resourceType, item.id);
 		}
 	}
 

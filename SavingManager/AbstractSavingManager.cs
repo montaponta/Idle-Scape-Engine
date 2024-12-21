@@ -7,150 +7,163 @@ using UnityEngine.SceneManagement;
 
 public abstract class AbstractSavingManager : MainRefs
 {
-    public static AbstractSavingManager shared;
-    public bool dontSave;
-    protected DateTime lastSaveDate;
-    [HideInInspector] public bool isSavingDataLoadComplete;
-    public Timer playtimeTimer = new Timer(TimerMode.counterFixedUpdate, false, true);
-    public Dictionary<Type, AbstractSavingData> savingDataPairs = new Dictionary<Type, AbstractSavingData>();
-    protected int sceneIndex;
+	public static AbstractSavingManager shared;
+	public bool dontSave;
+	protected DateTime lastSaveDate;
+	[HideInInspector] public bool isSavingDataLoadComplete;
+	public Timer playtimeTimer = new Timer(TimerMode.counterFixedUpdate, false, true);
+	public Dictionary<SavingDataType, AbstractSavingData> savingDataPairs = new Dictionary<SavingDataType, AbstractSavingData>();
+	protected int sceneIndex;
 
-    public static bool DontSave { get => shared.dontSave; set => shared.dontSave = value; }
-    public static bool IsSavingDataLoadComplete => shared.isSavingDataLoadComplete;
-    public static Timer PlaytimeTimer => shared.playtimeTimer;
-    public string customSavingDataPath => GetCustomSavingDataPath();
+	public static bool DontSave { get => shared.dontSave; set => shared.dontSave = value; }
+	public static bool IsSavingDataLoadComplete => shared.isSavingDataLoadComplete;
+	public static Timer PlaytimeTimer => shared.playtimeTimer;
+	public string customSavingDataPath => GetCustomSavingDataPath();
 
-    protected Main main => GetRef<Main>();
+	protected Main main => GetRef<Main>();
 
 
-    protected virtual void Awake()
-    {
-        shared = this;
-        AddSavingDatasToList();
+	protected virtual void Awake()
+	{
+		shared = this;
 
-        FindObjectOfType<Initializer>().AddReadySharedObject(this);
+
+		FindObjectOfType<Initializer>().AddReadySharedObject(this);
 #if UNITY_EDITOR
-        var arr = FindObjectsOfType<AbstractSavingManager>();
-        if (arr.Length > 1) Debug.LogError("Singleton already exist!!!");
+		var arr = FindObjectsOfType<AbstractSavingManager>();
+		if (arr.Length > 1) Debug.LogError("Singleton already exist!!!");
 #endif
-    }
+	}
 
-    public virtual T GetSavingData<T>() where T : AbstractSavingData
-    {
-        return (T)savingDataPairs[typeof(T)];
-    }
+	public virtual void Init()
+	{
+		AddSavingDatasToList();
+	}
 
-    protected virtual void LoadES3Data<T>(T data, string path = "") where T : AbstractSavingData
-    {
-        if (path == "")
-        {
-            if (ES3.KeyExists(data.ToString()))
-                ES3.LoadInto(data.ToString(), data);
-        }
-        else
-        {
-            if (ES3.KeyExists(data.ToString(), path))
-                ES3.LoadInto(data.ToString(), path, data);
-        }
+	public virtual AbstractSavingData GetSavingData(SavingDataType type) { return savingDataPairs[type]; }
 
-        data.LoadData();
-    }
+	public virtual T GetSavingData<T>(SavingDataType type) where T : AbstractSavingData
+	{
+		return (T)savingDataPairs[type];
+	}
 
-    protected abstract void AddSavingDatasToList();
-    public virtual void LoadData() { isSavingDataLoadComplete = true; }
-    public virtual void SaveData(bool collectParams = true) { lastSaveDate = DateTime.UtcNow; }
+	public virtual AbstractSavingData GetSavingData<T>()
+	{
+		var savingData = savingDataPairs.Where(a => a.Value is T).FirstOrDefault().Value;
+		return savingData;
+	}
 
-    public virtual void SaveAllData()
-    {
-        var b = dontSave;
-        dontSave = false;
-        ES3.Save("sceneIndex", sceneIndex);
-        if (!savingDataPairs.Any()) AddSavingDatasToList();
+	protected virtual void LoadES3Data<T>(T data, string path = "") where T : AbstractSavingData
+	{
+		if (path == "")
+		{
+			if (ES3.KeyExists(data.ToString()))
+				ES3.LoadInto(data.ToString(), data);
+		}
+		else
+		{
+			if (ES3.KeyExists(data.ToString(), path))
+				ES3.LoadInto(data.ToString(), path, data);
+		}
 
-        foreach (var item in savingDataPairs.Values)
-        {
-            item.SaveData(true);
-        }
+		data.LoadData();
+	}
 
-        dontSave = b;
-        print("Saved");
-    }
+	protected abstract void AddSavingDatasToList();
+	public virtual void LoadData() { isSavingDataLoadComplete = true; }
+	public virtual void SaveData(bool collectParams = true) { lastSaveDate = DateTime.UtcNow; }
 
-    public virtual void SaveDataToPath(string key)
-    {
-        foreach (var item in savingDataPairs.Values)
-        {
-            item.SaveDataToPath(true, key);
-        }
+	public virtual void SaveAllData()
+	{
+		var b = dontSave;
+		dontSave = false;
+		ES3.Save("sceneIndex", sceneIndex);
+		if (!savingDataPairs.Any()) AddSavingDatasToList();
 
-        ES3.Save("sceneIndex", sceneIndex, $"SaveFile_{key}.es3");
-    }
+		foreach (var item in savingDataPairs.Values)
+		{
+			item.SaveData(true);
+		}
 
-    public void DestroyData()
-    {
-        ES3.DeleteFile();
+		dontSave = b;
+		print("Saved");
+	}
 
-        for (int i = 0; i < 100; i++)
-        {
-            ES3.DeleteFile($"ResourceProducers_{i}.es3");
-        }
+	public virtual void SaveDataToPath(string key)
+	{
+		foreach (var item in savingDataPairs.Values)
+		{
+			item.SaveDataToPath(true, key);
+		}
+
+		ES3.Save("sceneIndex", sceneIndex, $"SaveFile_{key}.es3");
+	}
+
+	public void DestroyData()
+	{
+		ES3.DeleteFile();
+
+		for (int i = 0; i < 100; i++)
+		{
+			ES3.DeleteFile($"ResourceProducers_{i}.es3");
+		}
 
 
 #if UNITY_EDITOR
-        if (EditorApplication.isPlaying) dontSave = true;
+		if (EditorApplication.isPlaying) dontSave = true;
 #endif
-        print("Saved Data Destroyed");
-    }
+		print("Saved Data Destroyed");
+	}
 
-    public void ResetSavingData()
-    {
-        foreach (var item in savingDataPairs.Values)
-        {
-            item.ResetData();
-        }
-        dontSave = true;
-    }
+	public void ResetSavingData()
+	{
+		foreach (var item in savingDataPairs.Values)
+		{
+			item.ResetData();
+		}
+		dontSave = true;
+	}
 
-    public virtual void ReturnResourcesFromBackpackes(List<CollectablesItemCount> list)
-    {
-        foreach (var item in list)
-        {
-            var storages = GetRef<CollectAndCraftFunctions>().GetStoragesWithThisResource(item.resourceType);
-            var remain = item.count;
+	public virtual void ReturnResourcesFromBackpackes(List<CollectablesItemCount> list)
+	{
+		foreach (var item in list)
+		{
+			var storages = GetRef<CollectAndCraftFunctions>().GetStoragesWithThisResource(item.resourceType);
+			var remain = item.count;
 
-            foreach (var storage in storages)
-            {
-                var freeSpace = storage.GetStorageFreeSpace(item.resourceType, StorageReserveType.none);
-                var canTake = Mathf.Clamp(remain, 0, freeSpace);
-                storage.ReceiveResource(item.resourceType, canTake);
-                remain -= canTake;
-                if (Mathf.Approximately(remain, 0)) remain = 0;
-                if (remain == 0) break;
-            }
-        }
-    }
+			foreach (var storage in storages)
+			{
+				var freeSpace = storage.GetStorageFreeSpace(item.resourceType, StorageReserveType.none);
+				var canTake = Mathf.Clamp(remain, 0, freeSpace);
+				storage.ReceiveResource(item.resourceType, canTake);
+				remain -= canTake;
+				if (Mathf.Approximately(remain, 0)) remain = 0;
+				if (remain == 0) break;
+			}
+		}
+	}
 
-    public virtual bool IsAllAdsDisabled()
-    {
-        //return shopSavingData.isAllAdsDisabled;
-        return false;
-    }
+	public virtual bool IsAllAdsDisabled()
+	{
+		//return shopSavingData.isAllAdsDisabled;
+		return false;
+	}
 
-    public static string GetCustomSavingDataPath()
-    {
-        return "CustomSavingData.es3";
-    }
+	public static string GetCustomSavingDataPath()
+	{
+		return "CustomSavingData.es3";
+	}
 
-    protected virtual void OnApplicationFocus(bool focus)
-    {
-        if (SceneManager.GetActiveScene().name == "Loading Scene") return;
-        //if (!focus) SaveData();
-    }
+	protected virtual void OnApplicationFocus(bool focus)
+	{
+		if (SceneManager.GetActiveScene().name == "Loading Scene") return;
+		//if (!focus) SaveData();
+	}
 
-    protected virtual void OnApplicationQuit()
-    {
-        if (SceneManager.GetActiveScene().name == "Loading Scene") return;
-        if ((DateTime.UtcNow - lastSaveDate).TotalSeconds > 0.5f) SaveData();
-        //GetRef<QuestsManager>().ApplicationQuit();
-    }
+	protected virtual void OnApplicationQuit()
+	{
+		if (SceneManager.GetActiveScene().name == "Loading Scene") return;
+		if ((DateTime.UtcNow - lastSaveDate).TotalSeconds > 0.5f) SaveData();
+		//GetRef<QuestsManager>().ApplicationQuit();
+	}
 }

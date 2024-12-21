@@ -20,6 +20,8 @@ public class Main : MainRefs
 	private (float speed, Vector3 pos, bool leanCameraInclude) alignTargetData;
 	private Vector3 camPos;
 
+	private AbstractSavingManager savingManager => GetRef<AbstractSavingManager>();
+
 	private void Awake()
 	{
 		shared = this;
@@ -34,12 +36,14 @@ public class Main : MainRefs
 	{
 		if (!debugTools.isDebugActive)
 		{
-			GetRef<AbstractSavingManager>().LoadData();
+			savingManager.Init();
+			savingManager.LoadData();
 		}
 		else
 		{
-			GetRef<AbstractSavingManager>().dontSave = true;
-			GetRef<AbstractSavingManager>().isSavingDataLoadComplete = true;
+			savingManager.Init();
+			savingManager.dontSave = true;
+			savingManager.isSavingDataLoadComplete = true;
 			debugTools.SetDebugData();
 		}
 	}
@@ -163,9 +167,9 @@ public class Main : MainRefs
 
 	public void EndLevel()
 	{
-		GetRef<AbstractSavingManager>().dontSave = false;
-		GetRef<AbstractSavingManager>().SaveData(true);
-		GetRef<AbstractSavingManager>().dontSave = true;
+		savingManager.dontSave = false;
+		savingManager.SaveData(true);
+		savingManager.dontSave = true;
 		SceneManager.LoadSceneAsync("Loading Scene");
 	}
 
