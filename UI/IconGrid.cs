@@ -51,6 +51,7 @@ public class IconGrid
 		}
 
 		go.transform.SetParent(iconPairs[target]);
+		go.transform.localPosition = Vector3.zero;
 		Update();
 		return go.GetComponent<T>();
 	}
