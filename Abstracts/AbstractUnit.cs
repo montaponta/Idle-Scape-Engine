@@ -282,4 +282,6 @@ public abstract class AbstractUnit : MainRefs, IIDExtention
 	{
 		ClearUnitActions();
 	}
+
+	public virtual T GetEntity<T>(object[] arr) { return default(T); }
 }
