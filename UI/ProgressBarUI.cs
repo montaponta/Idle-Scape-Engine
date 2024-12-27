@@ -67,6 +67,6 @@ public class ProgressBarUI : MainRefs
 
 	private void FixedUpdate()
 	{
-		if (timer != null) SetValue(timer.GetRemainTimeNormalized());
+		if (timer != null) SetValue(timer.GetTimeNormalized());
 	}
 }
