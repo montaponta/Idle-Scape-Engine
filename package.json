@@ -1,7 +1,7 @@
 {
   "name": "com.idleengine.idlescapeengine",
   "displayName": "IdleScape Engine",
-  "version": "10.2.0",
+  "version": "10.3.0",
   "description": "Engine for Idle games with loot, build and craft mechanics",
   "repository": {
     "url": "https://github.com/multiplytencom/Idle-Scape-Engine.git",
