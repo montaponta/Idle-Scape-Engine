@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ProgressBarUI : MonoBehaviour
+public class ProgressBarUI : MainRefs
 {
 	public SlicedFilledImage bar;
 	[SomeTextInInspector("or", FontStyle.BoldAndItalic)]
@@ -14,13 +14,27 @@ public class ProgressBarUI : MonoBehaviour
 	public int roundTo = 0;
 	private Timer timer;
 	public float value { get; private set; }
+	private AbstractUI Ui => GetRef<AbstractUI>();
 
-
-	public void Init(Timer timer, bool destroyOnReached = true)
+	/// <summary>
+	/// Set Timer to get timer.GetRemainTimeNormalized self
+	/// </summary>
+	/// <param name="timer"></param>
+	/// <param name="destroyFlag">0 - don't destroy, 1 - destroy in IconGrid, 2 - destroy as GameObject</param>
+	public void Init(Timer timer, int destroyFlag, Transform target)
 	{
 		this.timer = timer;
-		if (destroyOnReached)
-			timer.OnTimerReached += () => Destroy(gameObject);
+
+		switch (destroyFlag)
+		{
+			case 1:
+				if (target) timer.OnTimerReached += () => Ui.DestroyIcon(target, gameObject);
+				else throw new NullReferenceException();
+				break;
+			case 2:
+				timer.OnTimerReached += () => Destroy(gameObject);
+				break;
+		}
 	}
 
 	public void Init(Timer timer, Action action)

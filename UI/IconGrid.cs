@@ -37,7 +37,7 @@ public class IconGrid
 		var go = Object.Instantiate(iconPrefab, mainFolder);
 		if (!iconPairs.ContainsKey(target)) iconPairs.Add(target, mainFolder);
 		Update();
-		return go.GetComponent<T>();
+		return go.GetComponentInChildren<T>();
 	}
 
 	public T CreateIcon<T>(GameObject iconPrefab, Transform target, GameObject containerPrefab)
@@ -53,7 +53,7 @@ public class IconGrid
 		go.transform.SetParent(iconPairs[target]);
 		go.transform.localPosition = Vector3.zero;
 		Update();
-		return go.GetComponent<T>();
+		return go.GetComponentInChildren<T>();
 	}
 
 	public void DestroyIcon(Transform target, GameObject iconGO)
