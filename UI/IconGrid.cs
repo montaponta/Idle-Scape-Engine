@@ -56,6 +56,12 @@ public class IconGrid
 		return go.GetComponentInChildren<T>();
 	}
 
+	public void AddExistingIcon(GameObject existingIcon, Transform target)
+	{
+		iconPairs.Add(target, existingIcon.transform);
+		Update();
+	}
+
 	public void DestroyIcon(Transform target, GameObject iconGO)
 	{
 		if (iconGO == null) return;
