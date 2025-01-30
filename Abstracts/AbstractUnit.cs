@@ -286,5 +286,5 @@ public abstract class AbstractUnit : MainRefs, IIDExtention
 	public virtual T GetEntity<T>() { return default; }
 	public virtual T GetEntity<T>(object[] arr) { return default; }
 	public virtual void SetEntity<T>(T entity) { }
-	public virtual void SetEntity<T>(object[] arr) { }
+	public virtual void SetEntity(object[] arr) { }
 }
