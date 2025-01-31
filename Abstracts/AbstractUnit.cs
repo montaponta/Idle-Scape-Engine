@@ -259,6 +259,7 @@ public abstract class AbstractUnit : MainRefs, IIDExtention
 
 	public virtual string GetID()
 	{
+		if (id == "") SetID(Guid.NewGuid().ToString());
 		return id;
 	}
 
