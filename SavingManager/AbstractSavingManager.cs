@@ -47,10 +47,10 @@ public abstract class AbstractSavingManager : MainRefs
 		return (T)savingDataPairs[type];
 	}
 
-	public virtual AbstractSavingData GetSavingData<T>()
+	public virtual T GetSavingData<T>() where T : AbstractSavingData
 	{
 		var savingData = savingDataPairs.Where(a => a.Value is T).FirstOrDefault().Value;
-		return savingData;
+		return (T)savingData;
 	}
 
 	protected virtual void LoadES3Data<T>(T data, string path = "") where T : AbstractSavingData
