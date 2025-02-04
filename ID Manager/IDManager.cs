@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,4 +12,9 @@ public interface IIDExtention
     public string GetID();
     public GameObject GetGameObject();
     public Object GetObject();
+}
+
+public interface IIDCollectionExtension
+{
+    IEnumerable<IIDExtention> GetCollection();
 }
