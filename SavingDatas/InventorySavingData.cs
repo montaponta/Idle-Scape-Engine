@@ -35,7 +35,7 @@ public class InventorySavingData : AbstractSavingData, IObjectObservable
 
 		object[] arr = new object[]
 		{
-			item, 
+			item,
 			this
 		};
 
@@ -121,17 +121,23 @@ public class InventorySavingData : AbstractSavingData, IObjectObservable
 		resourceTypeIDsList.Remove(v);
 	}
 
+	public override void SaveData(bool collectParams, bool isSave = true)
+	{
+		if (savingManager.dontSave) return;
+		if (isSave) SaveDataObject();
+	}
+
 	protected override void SaveDataObject()
 	{
 		ES3.Save(ToString(), this);
 	}
 
-    protected override void SaveDataObject(string key)
-    {
-        ES3.Save(ToString(), this, $"SaveFile_{key}.es3");
-    }
+	protected override void SaveDataObject(string key)
+	{
+		ES3.Save(ToString(), this, $"SaveFile_{key}.es3");
+	}
 
-    public void AddObjectObserver(IObjectObserver observer)
+	public void AddObjectObserver(IObjectObserver observer)
 	{
 		OnObjectObservableChanged += observer.OnObjectObservableChanged;
 	}
