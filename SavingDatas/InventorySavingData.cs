@@ -40,7 +40,6 @@ public class InventorySavingData : AbstractSavingData, IObjectObservable
 		};
 
 		OnObjectObservableChanged?.Invoke(arr);
-		SaveData(false);
 	}
 
 	public void ChangeInventory(ResourceType inventoryType, CollectablesItemCount collectables)
@@ -61,7 +60,6 @@ public class InventorySavingData : AbstractSavingData, IObjectObservable
 		};
 
 		OnObjectObservableChanged?.Invoke(arr);
-		SaveData(false);
 	}
 
 	public void RemoveInventory(ResourceType inventoryType, CollectablesItemCount collectables)
@@ -79,7 +77,6 @@ public class InventorySavingData : AbstractSavingData, IObjectObservable
 		};
 
 		OnObjectObservableChanged?.Invoke(arr);
-		SaveData(false);
 	}
 
 	public float GetInventoryCount(ResourceType inventoryType, ResourceType type)
@@ -110,21 +107,18 @@ public class InventorySavingData : AbstractSavingData, IObjectObservable
 	public void AddResourceTypeID(ResourceType type, string id)
 	{
 		resourceTypeIDsList.Add((type, id));
-		SaveData(false);
 	}
 
 	public void RemoveResourceTypeID(string id)
 	{
 		var v = resourceTypeIDsList.Find(a => a.id == id);
 		resourceTypeIDsList.Remove(v);
-		SaveData(false);
 	}
 
 	public void RemoveResourceTypeID(ResourceType type, string id)
 	{
 		var v = resourceTypeIDsList.Find(a => a.type == type && a.id == id);
 		resourceTypeIDsList.Remove(v);
-		SaveData(false);
 	}
 
 	protected override void SaveDataObject()
